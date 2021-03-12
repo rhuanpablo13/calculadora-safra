@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "haJ6K9/OnEvLa7jwIBaAEeTGJayvnDe1RKVXgv6tOUYF1EPMBQxgXpSLP3TaW278BIF3pd3APkkK8GucX7BuVA==",
+  "success": true,
+  "projectFilePath": "D:\\back-calculadora-safra\\calculadora-safra\\calculadora-safra.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rhuan\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.10.13\\microsoft.visualstudio.azure.containers.tools.targets.1.10.13.nupkg.sha512"
+  ],
+  "logs": []
+}
