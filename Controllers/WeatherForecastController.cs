@@ -28,6 +28,14 @@ namespace calculadora_safra.Controllers
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
+            
+            Console.WriteLine("--------------------------");
+            Console.WriteLine(HttpContext.User.Identity.Name);
+            Console.WriteLine(HttpContext.User.Identity.AuthenticationType);
+            Console.WriteLine(HttpContext.User.Identity.IsAuthenticated);
+            Console.WriteLine(HttpContext.User.Claims.Count());
+            Console.WriteLine(HttpContext.User.Identities.Count());
+
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

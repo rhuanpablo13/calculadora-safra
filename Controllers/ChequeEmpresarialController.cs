@@ -45,11 +45,15 @@ namespace calculadora_api.Controllers
             var conexao = HttpContext.Connection.ToString();
             Console.WriteLine(https + "\r\n" + caminho + "\r\n" + status + "\r\n" + conexao);
 
-            string userName = HttpContext.User.Identity.Name;
             Console.WriteLine("--------------------------");
-            Console.WriteLine(userName);
-            Console.WriteLine(_user.Name);
-            Console.WriteLine(_user.IsAuthenticated());
+            Console.WriteLine(HttpContext.User.Identity.Name);
+            Console.WriteLine(HttpContext.User.Identity.AuthenticationType);
+            Console.WriteLine(HttpContext.User.Identity.IsAuthenticated);
+            Console.WriteLine(HttpContext.User.Claims.Count());
+            Console.WriteLine(HttpContext.User.Identities.Count());
+
+            
+
 
             // Console.WriteLine(_user.Name);
             // Console.WriteLine(_user.Nome);
@@ -60,10 +64,11 @@ namespace calculadora_api.Controllers
             //     //return calcular(cheques);
             // }
             // return NotFound(); // vai para o incluirLancamento
-            return Ok(userName);
+            return Ok();
         }   
 
-        //GET:      api/users/n
+
+        //GET:/api/users/n
         [HttpGet("{id}")]
         public ActionResult<ChequeEmpresarial> ChequeEmpresarialItem(int id)
         {
