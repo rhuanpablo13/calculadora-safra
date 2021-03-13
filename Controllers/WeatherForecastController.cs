@@ -27,8 +27,7 @@ namespace calculadora_safra.Controllers
 
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
-        {
-            
+        {            
             Console.WriteLine("--------------------------");
             Console.WriteLine(HttpContext.User.Identity.Name);
             Console.WriteLine(HttpContext.User.Identity.AuthenticationType);

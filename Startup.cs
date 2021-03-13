@@ -59,7 +59,7 @@ namespace calculadora_api
             services.AddDbContext<UserContext>
                 (opt => opt.UseSqlServer(Configuration["Data:UserAPIConnection:ConnectionString"]));
 
-            services.AddScoped<IUser, AspNetUser>();
+            services.AddScoped<IUser, User>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

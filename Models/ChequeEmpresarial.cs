@@ -13,36 +13,36 @@ namespace calculadora_api.Models
         public int id { get; set; }
         public string dataBase { get; set; }
         public string indiceDB { get; set; }
-        public double indiceDataBase { get; set; }
+        public float indiceDataBase { get; set; }
         public string indiceBA { get; set; }
-        public double indiceDataBaseAtual { get; set; }
+        public float indiceDataBaseAtual { get; set; }
         public string dataBaseAtual { get; set; }
-        public double valorDevedor { get; set; }
+        public float valorDevedor { get; set; }
         public string encargosMonetarios { get; set; }
-        public double lancamentos { get; set; }
+        public float lancamentos { get; set; }
         public string tipoLancamento { get; set; }
-        public double valorDevedorAtualizado { get; set; }
+        public float valorDevedorAtualizado { get; set; }
         public string contractRef { get; set; }
         public string ultimaAtualizacao { get; set; }
         public string infoParaCalculo { get; set; }
 
 
          public void copyFromChequeEmpresarialBack(ChequeEmpresarialBack cb) {            
-            id = cb.id > -1 ? cb.id : -1;
-            dataBase = cb.dataBase.ToString("yyyy-MM-dd");
-            indiceDB = cb.indiceDB;
-            indiceDataBase = cb.indiceDataBase;
-            indiceBA = cb.indiceBA;
-            indiceDataBaseAtual = cb.indiceDataBaseAtual;
-            dataBaseAtual = cb.dataBaseAtual.ToString("yyyy-MM-dd");
-            valorDevedor = cb.valorDevedor;
-            encargosMonetarios = JSON.toStringJson<EncargosMonetarios>(cb.encargosMonetarios).ToString();
-            lancamentos = cb.lancamentos;
-            tipoLancamento = cb.tipoLancamento;
-            valorDevedorAtualizado = cb.valorDevedorAtualizado;
-            contractRef = cb.contractRef;
-            ultimaAtualizacao = cb.ultimaAtualizacao.ToString("yyyy-MM-dd");
-            infoParaCalculo = JSON.toStringJson<InfoParaCalculo>(cb.infoParaCalculo).ToString();
+            // id = cb.id > -1 ? cb.id : -1;
+            // dataBase = cb.dataBase.ToString("yyyy-MM-dd");
+            // indiceDB = cb.indiceDB;
+            // indiceDataBase = cb.indiceDataBase;
+            // indiceBA = cb.indiceBA;
+            // indiceDataBaseAtual = cb.indiceDataBaseAtual;
+            // dataBaseAtual = cb.dataBaseAtual.ToString("yyyy-MM-dd");
+            // valorDevedor = cb.valorDevedor;
+            // encargosMonetarios = JSON.toStringJson<EncargosMonetarios>(cb.encargosMonetarios).ToString();
+            // lancamentos = cb.lancamentos;
+            // tipoLancamento = cb.tipoLancamento;
+            // valorDevedorAtualizado = cb.valorDevedorAtualizado;
+            // contractRef = cb.contractRef;
+            // ultimaAtualizacao = cb.ultimaAtualizacao.ToString("yyyy-MM-dd");
+            // infoParaCalculo = JSON.toStringJson<InfoParaCalculo>(cb.infoParaCalculo).ToString();
         }
 
         public override string ToString() {

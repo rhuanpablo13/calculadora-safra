@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using calculadora_api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Controllers
 {
@@ -12,17 +14,26 @@ namespace calculadora_api.Controllers
     {
         private readonly UserContext _context;
 
+        private readonly IUser _user;
+
+        private IndiceController indiceController;
+
         public ParceladoPreController(UserContext context)
         {
             _context = context;
+            if (indiceController == null) 
+                indiceController = new IndiceController(_context);
         }
 
-        //GET:      api/users
-        [HttpGet]
-        // [Authorize(Roles = "admin")]
-        public ActionResult<IEnumerable<ParceladoPre>> GetParceladoPreItems()
+        [HttpGet("pesquisar")]
+        public ActionResult<IEnumerable<ParceladoPre>> GetParceladoPreItems([FromQuery] string contractRef)
         {
-            return _context.ParceladoPreItems;
+            List<ParceladoPre> parceladosPre = _context.ParceladoPreItems.Where(a => a.contractRef == contractRef).ToList();
+            if (parceladosPre.Count > 0) {
+                return parceladosPre;
+                //return calcular(cheques);
+            }
+            return NotFound(); // vai para o incluirLancamento
         }
 
         //GET:      api/users/n
