@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "tarefa-Properties",
+      "appliesTo": "Properties/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "tarefa-launchSettings",
+      "appliesTo": "Properties/launchSettings.json",
+      "type": "launch"
+    }
+  ]
+}
