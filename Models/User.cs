@@ -10,9 +10,8 @@ namespace calculadora_api.Models
     {
         private readonly IHttpContextAccessor _accessor;
 
-        public User(IHttpContextAccessor accessor)
+        public User()
         {
-            _accessor = accessor;
         }
 
 
@@ -21,14 +20,17 @@ namespace calculadora_api.Models
         public DateTime CreatedDate { get; set; }
         public string Profile { get; set; }
 
-        public string Name => _accessor.HttpContext.User.Identity.Name;
+        public string Name => "Rhuan";
+        // public string Name => _accessor.HttpContext.User.Identity.Name;
 
         public bool IsAuthenticated() {
-            return _accessor.HttpContext.User.Identity.IsAuthenticated;
+            // return _accessor.HttpContext.User.Identity.IsAuthenticated;
+            return false;
         }
 
         public IEnumerable<Claim> GetClaimsIdentity() {
-            return  _accessor.HttpContext.User.Claims;
+            // return  _accessor.HttpContext.User.Claims;
+            return null;
         }
 
     }

@@ -20,9 +20,7 @@ namespace calculadora_api.Services
         public LancamentosService(IndiceController indiceController) {
             this.indiceController = indiceController;
         }
-
         
-
         public Tabela calcular(JObject dados) {
             DadosLancamento dadosLancamento = new DadosLancamento(dados);
             dadosLancamento.parse();
