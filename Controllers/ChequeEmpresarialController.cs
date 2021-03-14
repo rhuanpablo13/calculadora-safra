@@ -35,29 +35,16 @@ namespace calculadora_api.Controllers
         }
 
 
-        [HttpGet]
-        public Array GetChequeEmpresarialItems()
-        {
-            // List<ChequeEmpresarial> cheques = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
-            // if (cheques.Count > 0) {
-            //     return cheques;
-            //     //return calcular(cheques);
-            // }
-
-            return _context.ChequeEmpresarialItems.ToArray(); // vai para o incluirLancamento
-        }   
-        
 
         [HttpGet("pesquisar")]
-        public Array GetChequeEmpresarialItems([FromQuery] string contractRef)
+        public ActionResult<IEnumerable<ChequeEmpresarial>> GetChequeEmpresarialItems([FromQuery] string contractRef)
         {
-            // List<ChequeEmpresarial> cheques = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
-            // if (cheques.Count > 0) {
-            //     return cheques;
-            //     //return calcular(cheques);
-            // }
-
-            return _context.ChequeEmpresarialItems.ToArray(); // vai para o incluirLancamento
+            List<ChequeEmpresarial> cheques = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
+            if (cheques.Count > 0) {
+                return cheques;
+                //return calcular(cheques);
+            }
+            return NoContent(); // vai para o incluirLancamento
         }   
 
 

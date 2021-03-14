@@ -90,10 +90,10 @@ namespace calculadora_api.Services
 
         public Totais calcularTotais(Tabela table) {
 
-            double subtotal = 0;
-            double honorarios = 0;
-            double multa = 0;
-            double total = 0;
+            float subtotal = 0;
+            float honorarios = 0;
+            float multa = 0;
+            float total = 0;
 
             if (!table.temRegistros()) {
                 return null;
@@ -116,7 +116,7 @@ namespace calculadora_api.Services
 
 
 
-        private double getIndiceDataBase(string indice, DateTime date, InfoParaCalculo formDefaultValues) {
+        private float getIndiceDataBase(string indice, DateTime date, InfoParaCalculo formDefaultValues) {
             return indiceController.getIndiceDataBase(
                 indice,
                 date,

@@ -11,7 +11,7 @@ namespace calculadora_api.Models
         public int Id { get; set; }
         public string indice { get; set; }
         public DateTime data { get; set; }
-        public double valor { get; set; }
+        public float valor { get; set; }
 
     }
 }   
