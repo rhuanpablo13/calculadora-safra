@@ -110,7 +110,7 @@ namespace calculadora_api.Controllers
         }
 
         
-        public double getIndiceDataBase(string indiceDB, DateTime dataBase, Object formDefaultValues) {
+        public float getIndiceDataBase(string indiceDB, DateTime dataBase, Object formDefaultValues) {
             if (indiceDB == null || dataBase == null) {
                 return 1;
             }
@@ -118,7 +118,7 @@ namespace calculadora_api.Controllers
             switch (indiceDB) {
             case "Encargos Contratuais %":
                 dynamic dynamic = JsonConvert.DeserializeObject(formDefaultValues.ToString());
-                return Convert.ToDouble(dynamic["formIndiceEncargos"].ToString());
+                return Convert.ToDecimal(dynamic["formIndiceEncargos"].ToString());
             default:
                 return GetIndiceItemsByDate(indiceDB, dataBase).Value.valor;
             }

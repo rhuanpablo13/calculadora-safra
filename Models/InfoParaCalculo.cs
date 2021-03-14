@@ -6,17 +6,19 @@ namespace calculadora_api.Models
 
 {
     public class InfoParaCalculo    {
+        
+        [Key]
         public DateTime formDataCalculo { get; set; } 
-        public double formMulta { get; set; } 
-        public double formJuros { get; set; } 
-        public double formHonorarios { get; set; } 
-        public double formMultaSobContrato { get; set; } 
+        public float formMulta { get; set; } 
+        public float formJuros { get; set; } 
+        public float formHonorarios { get; set; } 
+        public float formMultaSobContrato { get; set; } 
         public string formIndice { get; set; } 
-        public double formIndiceEncargos { get; set; } 
+        public float formIndiceEncargos { get; set; } 
         public bool isDate { get; set; } 
         public InfoContrato infoContrato { get; set; } 
 
-        public double desagio {get; set;}
+        public float desagio {get; set;}
 
         public InfoParaCalculo() {
             infoContrato = new InfoContrato();

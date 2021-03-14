@@ -7,9 +7,10 @@ namespace calculadora_api.Models
 {
     public class EncargosMonetarios    {
 
-        public double correcaoPeloIndice { get; set; } 
+        [Key]
+        public float correcaoPeloIndice { get; set; } 
         public JurosAm jurosAm { get; set; } 
-        public double multa { get; set; } 
+        public float multa { get; set; } 
 
         public EncargosMonetarios() {
             jurosAm = new JurosAm();

@@ -14,9 +14,5 @@ namespace calculadora_api.Models
 
 
         public UserContext(DbContextOptions<UserContext> options) : base(options) { }
-
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //     => optionsBuilder.UseSqlServer(@"Server=tcp:calculadora-db-safra2.database.windows.net,1433;Database=UserAPI;MultipleActiveResultSets=true;User ID=admin-calculadora-db-safra;Password=lZPw@fMQ^fLg");
-        
     }
 }

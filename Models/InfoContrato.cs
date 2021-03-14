@@ -6,6 +6,8 @@ namespace calculadora_api.Models
 
 {
     public class InfoContrato    {
+
+        [Key]
         public string pasta { get; set; } 
         public string contrato { get; set; } 
         public string tipo_contrato { get; set; } 

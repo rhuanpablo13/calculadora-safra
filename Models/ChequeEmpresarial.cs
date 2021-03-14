@@ -13,15 +13,15 @@ namespace calculadora_api.Models
         public int id { get; set; }
         public string dataBase { get; set; }
         public string indiceDB { get; set; }
-        public double indiceDataBase { get; set; }
+        public float indiceDataBase { get; set; }
         public string indiceBA { get; set; }
-        public double indiceDataBaseAtual { get; set; }
+        public float indiceDataBaseAtual { get; set; }
         public string dataBaseAtual { get; set; }
-        public double valorDevedor { get; set; }
+        public float valorDevedor { get; set; }
         public string encargosMonetarios { get; set; }
-        public double lancamentos { get; set; }
+        public float lancamentos { get; set; }
         public string tipoLancamento { get; set; }
-        public double valorDevedorAtualizado { get; set; }
+        public float valorDevedorAtualizado { get; set; }
         public string contractRef { get; set; }
         public string ultimaAtualizacao { get; set; }
         public string infoParaCalculo { get; set; }
@@ -67,19 +67,7 @@ namespace calculadora_api.Models
         }
     }
 
-    public class JurosAm    {
-        public int dias { get; set; } 
-        public double percentsJuros { get; set; } 
-        public double moneyValue { get; set; } 
-
-        public override string ToString() {
-            return " Juros AM: ["
-            + "\n\t\t\t dias -> " + dias
-            + "\n\t\t\t percentsJuros -> " + percentsJuros
-            + "\n\t\t\t moneyValue -> " + moneyValue + "\n\t\t ]"
-            ;
-        }
-    }
+    
 
     
 
@@ -98,15 +86,15 @@ namespace calculadora_api.Models
         public int id { get; set; }
         public DateTime dataBase { get; set; }
         public string indiceDB { get; set; }
-        public double indiceDataBase { get; set; }
+        public float indiceDataBase { get; set; }
         public string indiceBA { get; set; }
-        public double indiceDataBaseAtual { get; set; }
+        public float indiceDataBaseAtual { get; set; }
         public DateTime dataBaseAtual { get; set; }
-        public double valorDevedor { get; set; }
+        public float valorDevedor { get; set; }
         public EncargosMonetarios encargosMonetarios { get; set; }
-        public double lancamentos { get; set; }
+        public float lancamentos { get; set; }
         public string tipoLancamento { get; set; }
-        public double valorDevedorAtualizado { get; set; }
+        public float valorDevedorAtualizado { get; set; }
         public string contractRef { get; set; }
         public DateTime ultimaAtualizacao { get; set; }
         public InfoParaCalculo infoParaCalculo { get; set; }
@@ -149,7 +137,7 @@ namespace calculadora_api.Models
             
             EncargosMonetarios encargosMonetarios = new EncargosMonetarios();
             if (chequeEmpresarial.encargosMonetarios != null)
-                // encargosMonetarios = JSON.toObject<EncargosMonetarios>(chequeEmpresarial.encargosMonetarios);
+                encargosMonetarios = JSON.toObject<EncargosMonetarios>(chequeEmpresarial.encargosMonetarios);
             this.encargosMonetarios = encargosMonetarios;
 
             this.lancamentos = chequeEmpresarial.lancamentos;
