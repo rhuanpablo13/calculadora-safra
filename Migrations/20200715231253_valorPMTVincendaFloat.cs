@@ -2,11 +2,11 @@
 
 namespace calculadora_api.Migrations
 {
-    public partial class valorPMTVincendaFloat : Migration
+    public partial class valorPMTVincendadouble : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<float>(
+            migrationBuilder.AddColumn<double>(
                 name: "valorPMTVincenda",
                 table: "ParceladoPreItems",
                 nullable: false,

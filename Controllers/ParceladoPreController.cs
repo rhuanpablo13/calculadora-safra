@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using calculadora_api.Services;
+using System;
+using Newtonsoft.Json;
 
 namespace calculadora_api.Controllers
 {
@@ -90,6 +93,28 @@ namespace calculadora_api.Controllers
             _context.SaveChanges();
 
             return parceladoPreItem;
+        }
+
+        // Object dados -> json dos dados do formulário
+        [Route("incluir-parcelas")]
+        [HttpPost]
+        public ActionResult<JObject> incluirParcelas([FromBody] JObject dados) {
+            ParceladoPreService parceladoService = new ParceladoPreService(indiceController);
+            
+            Tabela registros = parceladoService.calcular(dados);
+            Console.WriteLine("##############################################");
+            Console.WriteLine(registros.ToString());
+            
+            if (registros != null) {
+                Totais totais = parceladoService.calcularTotais(registros);
+                if (totais != null) {
+                    Retorno retorno = new Retorno("contrato infos", registros, totais);
+                    return JObject.Parse(
+                        JsonConvert.SerializeObject(retorno)
+                    );
+                }
+            }
+            return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
         }
     }
 }

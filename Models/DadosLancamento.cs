@@ -6,47 +6,7 @@ using Newtonsoft.Json.Linq;
 namespace calculadora_api.Models
 
 {
-    public class ParceladoPre
-    {
-        [Key]
-        public int Id { get; set; }
-        public string nparcelas { get; set; }
-        public float parcelaInicial { get; set; }
-        public string dataVencimento { get; set; }
-        public string indiceDV { get; set; }
-        public float indiceDataVencimento { get; set; }
-        public string indiceDCA { get; set; }
-        public float indiceDataCalcAmor { get; set; }
-        public string dataCalcAmor { get; set; }
-
-        public float valorNoVencimento { get; set; }
-        public EncargosMonetarios encargosMonetarios { get; set; }
-
-        public float subtotal { get; set; }
-        public float valorPMTVincenda { get; set; }
-        public float amortizacao { get; set; }
-        public float totalDevedor { get; set; }
-        public string contractRef { get; set; }                
-        public string status { get; set; }
-        public string ultimaAtualizacao { get; set; }
-        public InfoParaCalculo infoParaCalculo { get; set; }
-        public string tipoParcela { get; set; }
-        public string infoParaAmortizacao { get; set; }
-        public Boolean vincenda {set; get; }
-        private dynamic dynamic { get; set; }
-
-        public ParceladoPre(JObject dados) {
-            Object tmp = dados.ToObject<Object>();
-            dynamic = JsonConvert.DeserializeObject(dados.ToString());
-        }
-
-        public ParceladoPre() {}
-
-    }
-
-
-
-    public class DadosParceladoPre {
+    public class DadosLancamento {
         
         private dynamic dynamic { get; set; }
 
@@ -66,13 +26,13 @@ namespace calculadora_api.Models
 
 
 
-        public DadosParceladoPre(JObject dados) {
+        public DadosLancamento(JObject dados) {
             Object tmp = dados.ToObject<Object>();
             dynamic = JsonConvert.DeserializeObject(dados.ToString());
         }
 
 
-        public DadosParceladoPre(dynamic dynamic) {
+        public DadosLancamento(dynamic dynamic) {
             this.dynamic = dynamic;
         }
 
@@ -110,6 +70,4 @@ namespace calculadora_api.Models
             + "\n]\n\n";
         }    
     }
-
-
-}
+}   

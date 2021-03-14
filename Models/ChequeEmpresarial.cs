@@ -13,15 +13,15 @@ namespace calculadora_api.Models
         public int id { get; set; }
         public string dataBase { get; set; }
         public string indiceDB { get; set; }
-        public float indiceDataBase { get; set; }
+        public double indiceDataBase { get; set; }
         public string indiceBA { get; set; }
-        public float indiceDataBaseAtual { get; set; }
+        public double indiceDataBaseAtual { get; set; }
         public string dataBaseAtual { get; set; }
-        public float valorDevedor { get; set; }
+        public double valorDevedor { get; set; }
         public string encargosMonetarios { get; set; }
-        public float lancamentos { get; set; }
+        public double lancamentos { get; set; }
         public string tipoLancamento { get; set; }
-        public float valorDevedorAtualizado { get; set; }
+        public double valorDevedorAtualizado { get; set; }
         public string contractRef { get; set; }
         public string ultimaAtualizacao { get; set; }
         public string infoParaCalculo { get; set; }
@@ -81,79 +81,11 @@ namespace calculadora_api.Models
         }
     }
 
-    public class EncargosMonetarios    {
-        public double correcaoPeloIndice { get; set; } 
-        public JurosAm jurosAm { get; set; } 
-        public double multa { get; set; } 
+    
 
-        public EncargosMonetarios() {
-            jurosAm = new JurosAm();
-        }
+    
 
-        public override string ToString() {
-            return "Encargos Monetarios: ["
-            + "\n\t\t correcaoPeloIndice -> " + correcaoPeloIndice
-            + "\n\t\t jurosAm -> " + jurosAm
-            + "\n\t\t multa -> " + multa
-            + "\n\t ]"
-            ;
-        }
-    }
-
-    public class InfoContrato    {
-        public string pasta { get; set; } 
-        public string contrato { get; set; } 
-        public string tipo_contrato { get; set; } 
-        public string contractRef { get; set; } 
-        public bool recuperacaoJudicial { get; set; } 
-        public string cliente { get; set; } 
-        public string cnpj { get; set; } 
-
-        public override string ToString() {
-            return "Info Contrato: ["
-            + "\n\t\t\t pasta -> " + pasta
-            + "\n\t\t\t contrato -> " + contrato
-            + "\n\t\t\t tipo_contrato -> " + tipo_contrato
-            + "\n\t\t\t contractRef -> " + contractRef
-            + "\n\t\t\t recuperacaoJudicial -> " + recuperacaoJudicial
-            + "\n\t\t\t cliente -> " + cliente
-            + "\n\t\t\t cnpj -> " + cnpj
-            + "\n\t\t]\n"
-            ;
-        }
-        
-    }
-
-    public class InfoParaCalculo    {
-        public DateTime formDataCalculo { get; set; } 
-        public double formMulta { get; set; } 
-        public double formJuros { get; set; } 
-        public double formHonorarios { get; set; } 
-        public double formMultaSobContrato { get; set; } 
-        public string formIndice { get; set; } 
-        public double formIndiceEncargos { get; set; } 
-        public bool isDate { get; set; } 
-        public InfoContrato infoContrato { get; set; } 
-
-        public InfoParaCalculo() {
-            infoContrato = new InfoContrato();
-        }
-
-        public override string ToString() {
-            return "Info Para Calculo: ["
-            + "\n\t\t formDataCalculo -> " + formDataCalculo
-            + "\n\t\t formMulta -> " + formMulta
-            + "\n\t\t formJuros -> " + formJuros
-            + "\n\t\t formHonorarios -> " + formHonorarios
-            + "\n\t\t formMultaSobContrato -> " + formMultaSobContrato
-            + "\n\t\t formIndice -> " + formIndice
-            + "\n\t\t formIndiceEncargos -> " + formIndiceEncargos
-            + "\n\t\t isDate -> " + isDate
-            + "\n\t\t infoContrato -> " + infoContrato
-            + "\t]\n"
-            ;
-        }
-    }
+    
 
 
 
@@ -217,7 +149,7 @@ namespace calculadora_api.Models
             
             EncargosMonetarios encargosMonetarios = new EncargosMonetarios();
             if (chequeEmpresarial.encargosMonetarios != null)
-                encargosMonetarios = JSON.toObject<EncargosMonetarios>(chequeEmpresarial.encargosMonetarios);
+                // encargosMonetarios = JSON.toObject<EncargosMonetarios>(chequeEmpresarial.encargosMonetarios);
             this.encargosMonetarios = encargosMonetarios;
 
             this.lancamentos = chequeEmpresarial.lancamentos;
@@ -291,68 +223,5 @@ namespace calculadora_api.Models
     }
 
 
-    public class DadosLancamento {
-        
-        private dynamic dynamic { get; set; }
-
-        public string contractRef { get; set; }
-        public string formDataCalculo { get; set; }
-        public double formMulta { get; set; }
-        public double formJuros { get; set; }
-        public double formHonorarios { get; set; }
-        public double formMultaSobContrato { get; set; }
-        public string formIndice { get; set; }
-        public double formIndiceEncargos { get; set; }
-        public string dataVencimento { get; set; }
-        public double saldoDevedor { get; set; }
-        public string tipoLancamento { get; set; }
-        public string dataBaseAtual { get; set; }
-        public double valorLancamento { get; set; }
-
-
-
-        public DadosLancamento(JObject dados) {
-            Object tmp = dados.ToObject<Object>();
-            dynamic = JsonConvert.DeserializeObject(dados.ToString());
-        }
-
-
-        public DadosLancamento(dynamic dynamic) {
-            this.dynamic = dynamic;
-        }
-
-
-        public void parse() {
-            contractRef = dynamic["contractRef"];
-            formDataCalculo = dynamic["infoParaCalculo"]["formDataCalculo"];
-            formMulta = dynamic["infoParaCalculo"]["formMulta"];
-            formJuros = dynamic["infoParaCalculo"]["formJuros"];
-            formHonorarios = dynamic["infoParaCalculo"]["formHonorarios"];
-            formMultaSobContrato = dynamic["infoParaCalculo"]["formMultaSobContrato"];
-            formIndice = dynamic["infoParaCalculo"]["formIndice"];
-            formIndiceEncargos = dynamic["infoParaCalculo"]["formIndiceEncargos"];
-            dataVencimento = dynamic["infoLancamento"]["dataVencimento"];
-            saldoDevedor = dynamic["infoLancamento"]["saldoDevedor"];
-            tipoLancamento = dynamic["infoLancamento"]["tipoLancamento"];
-            dataBaseAtual = dynamic["infoLancamento"]["dataBaseAtual"];
-            valorLancamento = dynamic["infoLancamento"]["valorLancamento"];
-        }
-
-        public override string ToString() {
-            return "RegistroParaCalculo: ["
-            + "\n\t formDataCalculo -> " + formDataCalculo
-            + "\n\t formMulta -> " + formMulta
-            + "\n\t formJuros -> " + formJuros
-            + "\n\t formHonorarios -> " + formHonorarios
-            + "\n\t formMultaSobContrato -> " + formMultaSobContrato
-            + "\n\t formIndice -> " + formIndice
-            + "\n\t formIndiceEncargos -> " + formIndiceEncargos
-            + "\n\t dataVencimento -> " + dataVencimento
-            + "\n\t saldoDevedor -> " + saldoDevedor
-            + "\n\t tipoLancamento -> " + tipoLancamento
-            + "\n\t dataBaseAtual -> " + dataBaseAtual
-            + "\n\t valorLancamento -> " + valorLancamento
-            + "\n]\n\n";
-        }    
-    }
+    
 }
