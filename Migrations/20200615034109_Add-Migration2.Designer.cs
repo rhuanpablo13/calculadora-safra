@@ -46,16 +46,16 @@ namespace calculadora_api.Migrations
                     b.Property<string>("indiceDB")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("indiceDataBase")
+                    b.Property<double>("indiceDataBase")
                         .HasColumnType("real");
 
-                    b.Property<float>("indiceDataBaseAtual")
+                    b.Property<double>("indiceDataBaseAtual")
                         .HasColumnType("real");
 
                     b.Property<string>("infoParaCalculo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("lancamentos")
+                    b.Property<double>("lancamentos")
                         .HasColumnType("real");
 
                     b.Property<string>("tipoLancamento")
@@ -64,10 +64,10 @@ namespace calculadora_api.Migrations
                     b.Property<string>("ultimaAtualizacao")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("valorDevedor")
+                    b.Property<double>("valorDevedor")
                         .HasColumnType("real");
 
-                    b.Property<float>("valorDevedorAtualizado")
+                    b.Property<double>("valorDevedorAtualizado")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -118,7 +118,7 @@ namespace calculadora_api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<float>("amortizacao")
+                    b.Property<double>("amortizacao")
                         .HasColumnType("real");
 
                     b.Property<string>("contractRef")
@@ -139,34 +139,34 @@ namespace calculadora_api.Migrations
                     b.Property<string>("indiceDV")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("indiceDataCalcAmor")
+                    b.Property<double>("indiceDataCalcAmor")
                         .HasColumnType("real");
 
-                    b.Property<float>("indiceDataVencimento")
+                    b.Property<double>("indiceDataVencimento")
                         .HasColumnType("real");
 
                     b.Property<string>("infoParaCalculo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("nparcelas")
+                    b.Property<double>("nparcelas")
                         .HasColumnType("real");
 
-                    b.Property<float>("parcelaInicial")
+                    b.Property<double>("parcelaInicial")
                         .HasColumnType("real");
 
                     b.Property<string>("status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("subtotal")
+                    b.Property<double>("subtotal")
                         .HasColumnType("real");
 
-                    b.Property<float>("totalDevedor")
+                    b.Property<double>("totalDevedor")
                         .HasColumnType("real");
 
                     b.Property<string>("ultimaAtualizacao")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("valorNoVencimento")
+                    b.Property<double>("valorNoVencimento")
                         .HasColumnType("real");
 
                     b.Property<string>("valorPMTVincenda")

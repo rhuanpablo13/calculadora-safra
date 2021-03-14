@@ -10,13 +10,13 @@ namespace calculadora_api.Migrations
                 name: "valor",
                 table: "IndiceItems",
                 nullable: false,
-                oldClrType: typeof(float),
+                oldClrType: typeof(double),
                 oldType: "real");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<float>(
+            migrationBuilder.AlterColumn<double>(
                 name: "valor",
                 table: "IndiceItems",
                 type: "real",

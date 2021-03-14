@@ -21,7 +21,7 @@ namespace calculadora_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     data = table.Column<DateTime>(type: "datetime2", nullable: false),
                     indice = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    valor = table.Column<float>(type: "real", nullable: false)
+                    valor = table.Column<double>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {

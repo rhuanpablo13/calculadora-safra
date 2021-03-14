@@ -15,15 +15,15 @@ namespace calculadora_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     dataBase = table.Column<string>(nullable: true),
                     indiceDB = table.Column<string>(nullable: true),
-                    indiceDataBase = table.Column<float>(nullable: false),
+                    indiceDataBase = table.Column<double>(nullable: false),
                     indiceBA = table.Column<string>(nullable: true),
-                    indiceDataBaseAtual = table.Column<float>(nullable: false),
+                    indiceDataBaseAtual = table.Column<double>(nullable: false),
                     dataBaseAtual = table.Column<string>(nullable: true),
-                    valorDevedor = table.Column<float>(nullable: false),
+                    valorDevedor = table.Column<double>(nullable: false),
                     encargosMonetarios = table.Column<string>(nullable: true),
-                    lancamentos = table.Column<float>(nullable: false),
+                    lancamentos = table.Column<double>(nullable: false),
                     tipoLancamento = table.Column<string>(nullable: true),
-                    valorDevedorAtualizado = table.Column<float>(nullable: false),
+                    valorDevedorAtualizado = table.Column<double>(nullable: false),
                     contractRef = table.Column<string>(nullable: true),
                     ultimaAtualizacao = table.Column<string>(nullable: true),
                     infoParaCalculo = table.Column<string>(nullable: true)
@@ -41,7 +41,7 @@ namespace calculadora_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     indice = table.Column<string>(nullable: true),
                     data = table.Column<string>(nullable: true),
-                    valor = table.Column<float>(nullable: false)
+                    valor = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,14 +54,14 @@ namespace calculadora_api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    nparcelas = table.Column<float>(nullable: false),
-                    parcelaInicial = table.Column<float>(nullable: false),
-                    indiceDataVencimento = table.Column<float>(nullable: false),
-                    indiceDataCalcAmor = table.Column<float>(nullable: false),
-                    valorNoVencimento = table.Column<float>(nullable: false),
-                    subtotal = table.Column<float>(nullable: false),
-                    amortizacao = table.Column<float>(nullable: false),
-                    totalDevedor = table.Column<float>(nullable: false),
+                    nparcelas = table.Column<double>(nullable: false),
+                    parcelaInicial = table.Column<double>(nullable: false),
+                    indiceDataVencimento = table.Column<double>(nullable: false),
+                    indiceDataCalcAmor = table.Column<double>(nullable: false),
+                    valorNoVencimento = table.Column<double>(nullable: false),
+                    subtotal = table.Column<double>(nullable: false),
+                    amortizacao = table.Column<double>(nullable: false),
+                    totalDevedor = table.Column<double>(nullable: false),
                     contractRef = table.Column<string>(nullable: true),
                     dataVencimento = table.Column<string>(nullable: true),
                     indiceDV = table.Column<string>(nullable: true),

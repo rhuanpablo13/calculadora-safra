@@ -10,13 +10,13 @@ namespace calculadora_api.Migrations
                 name: "nparcelas",
                 table: "ParceladoPreItems",
                 nullable: true,
-                oldClrType: typeof(float),
+                oldClrType: typeof(double),
                 oldType: "real");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<float>(
+            migrationBuilder.AlterColumn<double>(
                 name: "nparcelas",
                 table: "ParceladoPreItems",
                 type: "real",
