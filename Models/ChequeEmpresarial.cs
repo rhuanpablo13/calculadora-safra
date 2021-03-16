@@ -59,7 +59,6 @@ namespace calculadora_api.Models
 
         public void popularCheque(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento)
         {
-
             this.contractRef = contractRef;
             this.infoParaCalculo = infoParaCalculo;
             this.indiceDB = infoParaCalculo.formIndice;
