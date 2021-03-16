@@ -5,18 +5,21 @@ using System.ComponentModel.DataAnnotations;
 namespace calculadora_api.Models
 
 {
-    public class EncargosMonetarios    {
+    public class EncargosMonetarios
+    {
 
         [Key]
-        public float correcaoPeloIndice { get; set; } 
-        public JurosAm jurosAm { get; set; } 
-        public float multa { get; set; } 
+        public float correcaoPeloIndice { get; set; }
+        public JurosAm jurosAm { get; set; }
+        public float multa { get; set; }
 
-        public EncargosMonetarios() {
+        public EncargosMonetarios()
+        {
             jurosAm = new JurosAm();
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "Encargos Monetarios: ["
             + "\n\t\t correcaoPeloIndice -> " + correcaoPeloIndice
             + "\n\t\t jurosAm -> " + jurosAm
@@ -25,4 +28,4 @@ namespace calculadora_api.Models
             ;
         }
     }
-}   
+}

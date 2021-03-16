@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Converter;
 using Newtonsoft.Json;
-using System.Linq;
+using System.Linq; 
 using Newtonsoft.Json.Linq;
 using calculadora_api.Controllers;
 
@@ -15,93 +15,119 @@ namespace calculadora_api.Services
     public class LancamentosService
     {
 
-        private IndiceController indiceController;
+        private readonly IndiceController indiceController;
 
-        public LancamentosService(IndiceController indiceController) {
+        public LancamentosService(IndiceController indiceController)
+        {
             this.indiceController = indiceController;
         }
-        
-        public Tabela calcular(JObject dados) {
-            DadosLancamento dadosLancamento = new DadosLancamento(dados);
-            dadosLancamento.parse();
 
-            Tabela tabela = new Tabela();
-            tabela.carregarRegistros(dados);
+        // quando for o primeiro registro
+        public ChequeEmpresarial calcular(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento)
+        {
+            ChequeEmpresarial cheque = new ChequeEmpresarial();
+            cheque.popularCheque(contractRef, infoParaCalculo, infoLancamento);
+            return calcular(cheque);
+        }
 
-            if (tabela.temRegistros()) {
-                return calcular(dadosLancamento, tabela);
-            }
-            var cheque = new ChequeEmpresarialBack();
-            cheque.copyFromDadosLancamento(dadosLancamento);
-            
-            tabela.adicionarRegistro(calcular(cheque));
-            return tabela;
+        // quando tiver mais de um registro
+        public ChequeEmpresarial calcular(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento, ChequeEmpresarial registroSuperior)
+        {
+            ChequeEmpresarial novoRegistro = new ChequeEmpresarial();
+            novoRegistro.popularCheque(contractRef, infoParaCalculo, infoLancamento);
+            novoRegistro.dataBase = registroSuperior.dataBaseAtual;
+            novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
+            novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
+            novoRegistro.indiceBA = infoParaCalculo.formIndice ?? registroSuperior.indiceBA;
+            novoRegistro.indiceDB = novoRegistro.indiceBA;
+            return calcular(novoRegistro);
         }
 
 
 
-        public Tabela calcular(DadosLancamento dadosLancamento, Tabela table) {
-            ChequeEmpresarialBack registroSuperior = table.getUltimoRegistro();
-            if (registroSuperior != null) {
-                ChequeEmpresarialBack novoRegistro = new ChequeEmpresarialBack();
-                novoRegistro.copyFromDadosLancamento(dadosLancamento);
-                novoRegistro.dataBase = registroSuperior.dataBaseAtual;
-                novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
-                novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
-                novoRegistro.indiceBA = dadosLancamento.formIndice == null ? registroSuperior.indiceBA : dadosLancamento.formIndice;
-                novoRegistro.indiceDB = novoRegistro.indiceBA;
-                table.adicionarRegistro(calcular(novoRegistro));
-                return table;
-            }
-            return null;
+        private ChequeEmpresarial calcular(ChequeEmpresarial ce)
+        {
+            //dias
+            ce.encargosMonetarios.jurosAm.dias = numberOfDays(ce.dataBase, ce.dataBaseAtual);
+
+            //indiceDataBase
+            ce.indiceDataBase = getIndiceDataBase(ce.indiceDB, ce.dataBase, ce.infoParaCalculo.formIndiceEncargos);
+
+            //indiceDataBaseAtual
+            ce.indiceDataBaseAtual = getIndiceDataBase(ce.indiceBA, ce.dataBaseAtual, ce.infoParaCalculo.formIndiceEncargos);
+
+            //correcaoPeloIndice
+            ce.encargosMonetarios.correcaoPeloIndice = calcCorrecaoPeloIndice(ce);
+
+            //percentsJuros
+            ce.encargosMonetarios.jurosAm.percentsJuros = calcPercentsJuros(ce);
+
+            //moneyValue
+            ce.encargosMonetarios.jurosAm.moneyValue = calcMoneyValue(ce);
+
+            // -1 indica que é a primeira linha sendo inserida
+            ce.encargosMonetarios.multa = calcMulta(ce);
+
+            //valorDevedorAtualizado
+            ce.valorDevedorAtualizado = calcValorDevedorAtualizado(ce);
+
+            return ce;
         }
 
 
 
-        private ChequeEmpresarialBack calcular(ChequeEmpresarialBack dadosLancamento) {
-            
-            dadosLancamento.encargosMonetarios.jurosAm.dias = numberOfDays(dadosLancamento.dataBase, dadosLancamento.dataBaseAtual);
-            dadosLancamento.indiceDataBase = getIndiceDataBase(dadosLancamento.indiceDB, dadosLancamento.dataBase, dadosLancamento.infoParaCalculo);
-            dadosLancamento.indiceDataBaseAtual = getIndiceDataBase(dadosLancamento.indiceBA, dadosLancamento.dataBaseAtual, dadosLancamento.infoParaCalculo);
-            
-            if (dadosLancamento.indiceDB == "Encargos Contratuais %")
-                dadosLancamento.encargosMonetarios.correcaoPeloIndice = ((dadosLancamento.valorDevedor * (dadosLancamento.indiceDataBaseAtual / 100)) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
+        private float calcCorrecaoPeloIndice(ChequeEmpresarial ce)
+        {
+            if (ce.indiceDB == "Encargos Contratuais %")
+                return ((ce.valorDevedor * (ce.indiceDataBaseAtual / 100)) / 30) * ce.encargosMonetarios.jurosAm.dias;
             else
-                dadosLancamento.encargosMonetarios.correcaoPeloIndice = (dadosLancamento.valorDevedor / dadosLancamento.indiceDataBase) * dadosLancamento.indiceDataBaseAtual - dadosLancamento.valorDevedor;
-            
-            dadosLancamento.encargosMonetarios.jurosAm.percentsJuros = (dadosLancamento.infoParaCalculo.formJuros / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
-            dadosLancamento.encargosMonetarios.jurosAm.moneyValue = ((dadosLancamento.valorDevedor + dadosLancamento.encargosMonetarios.correcaoPeloIndice) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias * (dadosLancamento.infoParaCalculo.formJuros / 100);
-            
-            // só é calculado aqui na primeira linha
-            if (dadosLancamento.encargosMonetarios.multa != -1)
-                dadosLancamento.encargosMonetarios.multa = (dadosLancamento.valorDevedor + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue) * (dadosLancamento.infoParaCalculo.formMulta / 100);
-            
-            if (dadosLancamento.tipoLancamento == "debit")
-                dadosLancamento.valorDevedorAtualizado = dadosLancamento.valorDevedor + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue + dadosLancamento.encargosMonetarios.multa + dadosLancamento.lancamentos;
-            else
-                dadosLancamento.valorDevedorAtualizado = (dadosLancamento.valorDevedor + dadosLancamento.encargosMonetarios.correcaoPeloIndice) - ((dadosLancamento.lancamentos - dadosLancamento.encargosMonetarios.multa) - dadosLancamento.encargosMonetarios.jurosAm.moneyValue);
+                return (ce.valorDevedor / ce.indiceDataBase) * ce.indiceDataBaseAtual - ce.valorDevedor;
+        }
 
-            Console.WriteLine("*********** dados calculados ***************");
-            Console.WriteLine(dadosLancamento.ToString());
+        private float calcPercentsJuros(ChequeEmpresarial ce)
+        {
+            return (ce.infoParaCalculo.formJuros / 30) * ce.encargosMonetarios.jurosAm.dias;
+        }
 
-            return dadosLancamento;
+        private float calcMoneyValue(ChequeEmpresarial ce)
+        {
+            return ((ce.valorDevedor + ce.encargosMonetarios.correcaoPeloIndice) / 30) * ce.encargosMonetarios.jurosAm.dias * (ce.infoParaCalculo.formJuros / 100);
+        }
+
+        private float calcMulta(ChequeEmpresarial ce)
+        {
+            if (ce.encargosMonetarios.multa != -1)
+                return (ce.valorDevedor + ce.encargosMonetarios.correcaoPeloIndice + ce.encargosMonetarios.jurosAm.moneyValue) * (ce.infoParaCalculo.formMulta / 100);
+            return -1;
         }
 
 
-        public Totais calcularTotais(Tabela table) {
+
+        private float calcValorDevedorAtualizado(ChequeEmpresarial ce)
+        {
+            if (ce.tipoLancamento == "debit")
+                return ce.valorDevedor + ce.encargosMonetarios.correcaoPeloIndice + ce.encargosMonetarios.jurosAm.moneyValue + ce.encargosMonetarios.multa + ce.lancamentos;
+            else
+                return (ce.valorDevedor + ce.encargosMonetarios.correcaoPeloIndice) - ((ce.lancamentos - ce.encargosMonetarios.multa) - ce.encargosMonetarios.jurosAm.moneyValue);
+        }
+
+
+        public Totais calcularTotais(Tabela table)
+        {
 
             float subtotal = 0;
             float honorarios = 0;
             float multa = 0;
             float total = 0;
 
-            if (!table.temRegistros()) {
+            if (!table.temRegistros())
+            {
                 return null;
             }
 
-            ChequeEmpresarialBack cb = table.getUltimoRegistro();
+            ChequeEmpresarial cb = table.getUltimoRegistro();
             subtotal = cb.valorDevedorAtualizado;
-            
+
             // honorarios = valorDevedorAtualizado 
             honorarios = subtotal * (cb.infoParaCalculo.formHonorarios / 100);
             // multa = ((valorDevedorAtualizado + honorarios) * multa_sob_contrato grupo 2 / 100
@@ -116,15 +142,17 @@ namespace calculadora_api.Services
 
 
 
-        private float getIndiceDataBase(string indice, DateTime date, InfoParaCalculo formDefaultValues) {
-            return indiceController.getIndiceDataBase(
+        private float getIndiceDataBase(string indice, DateTime date, float formIndiceEncargos)
+        {
+            return indiceController.getIndice(
                 indice,
                 date,
-                formDefaultValues.formIndiceEncargos
+                formIndiceEncargos
             );
         }
 
-        private int numberOfDays(DateTime minor, DateTime major) {
+        private int numberOfDays(DateTime minor, DateTime major)
+        {
             int days = major.Subtract(minor).Days;
             return days >= 0 ? days : minor.Subtract(major).Days;
         }

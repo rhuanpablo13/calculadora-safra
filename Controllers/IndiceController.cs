@@ -109,19 +109,19 @@ namespace calculadora_api.Controllers
             return indiceItem;
         }
 
-        
-        public float getIndiceDataBase(string indiceDB, DateTime dataBase, Object formDefaultValues) {
-            if (indiceDB == null || dataBase == null) {
+
+        public float getIndice(string indiceDB, DateTime dataBase, float formIndiceEncargos)
+        {
+            if (indiceDB == null || dataBase == null)
+            {
                 return 1;
             }
 
-            switch (indiceDB) {
-            case "Encargos Contratuais %":
-                dynamic dynamic = JsonConvert.DeserializeObject(formDefaultValues.ToString());
-                return Convert.ToDecimal(dynamic["formIndiceEncargos"].ToString());
-            default:
-                return GetIndiceItemsByDate(indiceDB, dataBase).Value.valor;
-            }
+            return indiceDB switch
+            {
+                "Encargos Contratuais %" => formIndiceEncargos,
+                _ => GetIndiceItemsByDate(indiceDB, dataBase).Value.valor,
+            };
         }
     }
 }

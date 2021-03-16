@@ -8,8 +8,6 @@ namespace calculadora_api.Models
 {
     public class User : IUser
     {
-        private readonly IHttpContextAccessor _accessor;
-
         public User()
         {
         }
@@ -23,12 +21,14 @@ namespace calculadora_api.Models
         public string Name => "Rhuan";
         // public string Name => _accessor.HttpContext.User.Identity.Name;
 
-        public bool IsAuthenticated() {
+        public bool IsAuthenticated()
+        {
             // return _accessor.HttpContext.User.Identity.IsAuthenticated;
             return false;
         }
 
-        public IEnumerable<Claim> GetClaimsIdentity() {
+        public IEnumerable<Claim> GetClaimsIdentity()
+        {
             // return  _accessor.HttpContext.User.Claims;
             return null;
         }

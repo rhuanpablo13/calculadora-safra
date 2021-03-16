@@ -14,4 +14,4 @@ namespace calculadora_api.Models
         public float valor { get; set; }
 
     }
-}   
+}

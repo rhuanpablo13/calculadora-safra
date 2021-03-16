@@ -82,80 +82,83 @@ namespace calculadora_api.Controllers
         [FromQuery] bool getAll = false,
         [FromQuery] bool recuperacaoJudicial = false)
         {
-            if(dtParameters.Order != null) {
-            IQueryable<Log> _logListByParameter = _context.LogItems;
-            var searchBy = dtParameters.Search?.Value;
-            var orderCriteria = string.Empty;
-            var orderAscendingDirection = true;
-
             if (dtParameters.Order != null)
             {
-                // in this example we just default sort on the 1st column
-                orderCriteria = dtParameters.Columns[dtParameters.Order[0].Column].Data;
-                orderAscendingDirection = dtParameters.Order[0].Dir.ToString().ToLower() == "asc";
-            }
-            else
-            {
-                // if we have an empty search then just order the results by Id ascending
-                orderCriteria = "Id";
-                orderAscendingDirection = true;
-            }
+                IQueryable<Log> _logListByParameter = _context.LogItems;
+                var searchBy = dtParameters.Search?.Value;
+                var orderCriteria = string.Empty;
+                var orderAscendingDirection = true;
 
-
-            if (!string.IsNullOrEmpty(searchBy))
-            {
-                _logListByParameter = _logListByParameter.Where(r =>
-                                           r.Id >= 0 && r.Id.Equals(searchBy.ToUpper()) ||
-                                           r.data != null && r.data.Equals(searchBy.ToUpper()) ||
-                                           r.usuario != null && r.usuario.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.pasta != null && r.pasta.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.contrato != null && r.contrato.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.tipoContrato != null && r.tipoContrato.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.dataSimulacao != null && r.dataSimulacao.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.infoTabela != null && r.infoTabela.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.acao != null && r.acao.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.modulo != null && r.modulo.ToUpper().Contains(searchBy.ToUpper()) ||
-                                           r.recuperacaoJudicial == true && r.recuperacaoJudicial.Equals(searchBy.ToUpper()) ||
-                                           r.recuperacaoJudicial == false && r.recuperacaoJudicial.Equals(searchBy.ToUpper())
-                                           );
-            }
-
-            var data2 = orderAscendingDirection ? _logListByParameter.AsQueryable().OrderByDynamic(orderCriteria, DtOrderDir.Asc).ToList() : _logListByParameter.AsQueryable().OrderByDynamic(orderCriteria, DtOrderDir.Desc).ToList();
-
-            // now just get the count of items (without the skip and take) - eg how many could be returned with filtering
-            var filteredResultsCount = data2.Count();
-            var totalResultsCount = _context.LogItems.Count();
-
-            if (string.IsNullOrEmpty(searchBy))
-            {
-
-                _logListByParameter.Where(item => item.pasta == pasta && item.contrato == contrato && item.tipoContrato == tipoContrato && item.recuperacaoJudicial == recuperacaoJudicial)
-                                       .OrderByDescending(x => x.data);
-                var data3 = _logListByParameter.ToList();
-                int recordsTotal = _logListByParameter.Count();
-            }
-
-            if (getAll)
-            {
-                return _logListByParameter.ToList();
-            }
-            else
-            {
-                var data = _logListByParameter
-                    .Skip(dtParameters.Start)
-                    .Take(dtParameters.Length)
-                    .ToList();
-
-                return new ObjectResult(new
+                if (dtParameters.Order != null)
                 {
-                    draw = dtParameters.Draw,
-                    recordsTotal = totalResultsCount,
-                    recordsFiltered = filteredResultsCount,
-                    data
-                });
+                    // in this example we just default sort on the 1st column
+                    orderCriteria = dtParameters.Columns[dtParameters.Order[0].Column].Data;
+                    orderAscendingDirection = dtParameters.Order[0].Dir.ToString().ToLower() == "asc";
+                }
+                else
+                {
+                    // if we have an empty search then just order the results by Id ascending
+                    orderCriteria = "Id";
+                    orderAscendingDirection = true;
+                }
+
+
+                if (!string.IsNullOrEmpty(searchBy))
+                {
+                    _logListByParameter = _logListByParameter.Where(r =>
+                                               r.Id >= 0 && r.Id.Equals(searchBy.ToUpper()) ||
+                                               r.data != null && r.data.Equals(searchBy.ToUpper()) ||
+                                               r.usuario != null && r.usuario.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.pasta != null && r.pasta.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.contrato != null && r.contrato.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.tipoContrato != null && r.tipoContrato.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.dataSimulacao != null && r.dataSimulacao.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.infoTabela != null && r.infoTabela.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.acao != null && r.acao.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.modulo != null && r.modulo.ToUpper().Contains(searchBy.ToUpper()) ||
+                                               r.recuperacaoJudicial == true && r.recuperacaoJudicial.Equals(searchBy.ToUpper()) ||
+                                               r.recuperacaoJudicial == false && r.recuperacaoJudicial.Equals(searchBy.ToUpper())
+                                               );
+                }
+
+                var data2 = orderAscendingDirection ? _logListByParameter.AsQueryable().OrderByDynamic(orderCriteria, DtOrderDir.Asc).ToList() : _logListByParameter.AsQueryable().OrderByDynamic(orderCriteria, DtOrderDir.Desc).ToList();
+
+                // now just get the count of items (without the skip and take) - eg how many could be returned with filtering
+                var filteredResultsCount = data2.Count();
+                var totalResultsCount = _context.LogItems.Count();
+
+                if (string.IsNullOrEmpty(searchBy))
+                {
+
+                    _logListByParameter.Where(item => item.pasta == pasta && item.contrato == contrato && item.tipoContrato == tipoContrato && item.recuperacaoJudicial == recuperacaoJudicial)
+                                           .OrderByDescending(x => x.data);
+                    var data3 = _logListByParameter.ToList();
+                    int recordsTotal = _logListByParameter.Count();
+                }
+
+                if (getAll)
+                {
+                    return _logListByParameter.ToList();
+                }
+                else
+                {
+                    var data = _logListByParameter
+                        .Skip(dtParameters.Start)
+                        .Take(dtParameters.Length)
+                        .ToList();
+
+                    return new ObjectResult(new
+                    {
+                        draw = dtParameters.Draw,
+                        recordsTotal = totalResultsCount,
+                        recordsFiltered = filteredResultsCount,
+                        data
+                    });
+                }
             }
-            } else {
-                return this.GetLogItems( pasta,  contrato,  tipoContrato,  pageSize,  pageNumber,  draw,  getAll,  recuperacaoJudicial);
+            else
+            {
+                return this.GetLogItems(pasta, contrato, tipoContrato, pageSize, pageNumber, draw, getAll, recuperacaoJudicial);
             }
         }
 

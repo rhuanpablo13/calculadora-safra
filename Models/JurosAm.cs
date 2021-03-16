@@ -5,14 +5,16 @@ using System.ComponentModel.DataAnnotations;
 namespace calculadora_api.Models
 
 {
-    public class JurosAm    {
+    public class JurosAm
+    {
 
         [Key]
-        public int dias { get; set; } 
-        public float percentsJuros { get; set; } 
-        public float moneyValue { get; set; } 
+        public int dias { get; set; }
+        public float percentsJuros { get; set; }
+        public float moneyValue { get; set; }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return " Juros AM: ["
             + "\n\t\t\t dias -> " + dias
             + "\n\t\t\t percentsJuros -> " + percentsJuros
@@ -20,4 +22,4 @@ namespace calculadora_api.Models
             ;
         }
     }
-}   
+}
