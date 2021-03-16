@@ -6,6 +6,33 @@ using Newtonsoft.Json.Linq;
 namespace calculadora_api.Models
 
 {
+    // {
+    //   contractRef: 'SBA.132393/20193400197350000 - NÃO DEFINIDOfalse',
+    //   table: [],
+    //   infoParaCalculo: {
+    //     formDataCalculo: '2018-12-01',
+    //     formUltimaAtualizacao: '',
+    //     formMulta: 10,
+    //     formJuros: 10,
+    //     formHonorarios: 10,
+    //     formMultaSobContrato: 10,
+    //     formIndice: 'INPC/IBGE',
+    //     formIndiceEncargos: '',
+    //     formDesagio: 2,
+    //     isDate: false
+    //   },
+    //   tableParcelas: [
+    //     {
+    //       nparcelas: 1,
+    //       parcelaInicial: 1,
+    //       dataVencimento: '2018-01-01',
+    //       valorNoVencimento: 1000,
+    //       status: 'aberto'
+    //     }
+    //   ]
+    // }
+
+
     public class ParceladoPre
     {
         [Key]
