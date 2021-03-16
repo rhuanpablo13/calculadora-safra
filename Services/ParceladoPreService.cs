@@ -15,33 +15,37 @@ namespace calculadora_api.Services
     public class ParceladoPreService
     {
 
-        private IndiceController indiceController;
+        private readonly IndiceController indiceController;
 
-        public ParceladoPreService(IndiceController indiceController) {
+        public ParceladoPreService(IndiceController indiceController)
+        {
             this.indiceController = indiceController;
         }
-        
 
-        public Tabela calcular(JObject dados) {
+
+        public Tabela calcular(JObject dados)
+        {
             DadosParceladoPre dadosParcela = new DadosParceladoPre(dados);
             dadosParcela.parse();
 
             Tabela tabela = new Tabela();
             tabela.carregarRegistros(dados);
 
-            if (tabela.temRegistros()) {
+            if (tabela.temRegistros())
+            {
                 return calcular(dadosParcela, tabela);
             }
             var parcela = new ParceladoPre();
             //cheque.copyFromDadosLancamento(dadosParcela);
-            
+
             tabela.adicionarRegistro(calcular(parcela));
             return tabela;
         }
 
 
 
-        public Tabela calcular(DadosParceladoPre dadosLancamento, Tabela table) {
+        public Tabela calcular(DadosParceladoPre dadosLancamento, Tabela table)
+        {
             // ParceladoPre novoRegistro = new ParceladoPre();
             // novoRegistro.copyFromDadosLancamento(dadosLancamento);
             // novoRegistro.dataBase = registroSuperior.dataBaseAtual;
@@ -55,21 +59,22 @@ namespace calculadora_api.Services
 
 
 
-        private ChequeEmpresarialBack calcular(ParceladoPre dadosLancamento) {
-            
+        private ChequeEmpresarial calcular(ParceladoPre dadosLancamento)
+        {
+
             // dadosLancamento.encargosMonetarios.jurosAm.dias = numberOfDays(dadosLancamento.dataCalcAmor, dadosLancamento.dataVencimento);
-            
+
             // dadosLancamento.indiceDataVencimento = getIndiceDataBase(dadosLancamento.indiceDV, dadosLancamento.dataVencimento, dadosLancamento.infoParaCalculo);
             // dadosLancamento.indiceDataCalcAmor = getIndiceDataBase(dadosLancamento.indiceDCA, dadosLancamento.dataCalcAmor, dadosLancamento.infoParaCalculo);
-            
+
             // if (dadosLancamento.indiceDV == "Encargos Contratuais %")
             //     dadosLancamento.encargosMonetarios.correcaoPeloIndice = ((dadosLancamento.valorNoVencimento * (dadosLancamento.indiceDataBaseAtual / 100)) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
             // else
             //     dadosLancamento.encargosMonetarios.correcaoPeloIndice = (dadosLancamento.valorDevedor / dadosLancamento.indiceDataBase) * dadosLancamento.indiceDataBaseAtual - dadosLancamento.valorDevedor;
-            
+
             // dadosLancamento.encargosMonetarios.jurosAm.percentsJuros = (dadosLancamento.infoParaCalculo.formJuros / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
             // dadosLancamento.encargosMonetarios.jurosAm.moneyValue = ((dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias * (dadosLancamento.infoParaCalculo.formJuros / 100);
-            
+
             // dadosLancamento.encargosMonetarios.multa = ((dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue + (dadosLancamento.infoParaCalculo.formMulta / 100);
             // dadosLancamento.subtotal = dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue + dadosLancamento.encargosMonetarios.multa;
             // dadosLancamento.valorPMTVincenda = dadosLancamento.valorNoVencimento * dadosLancamento.infoParaCalculo.desagio;
@@ -104,20 +109,22 @@ namespace calculadora_api.Services
         }
 
 
-        public Totais calcularTotais(Tabela table) {
+        public Totais calcularTotais(Tabela table)
+        {
 
             float subtotal = 0;
             float honorarios = 0;
             float multa = 0;
             float total = 0;
 
-            if (!table.temRegistros()) {
+            if (!table.temRegistros())
+            {
                 return null;
             }
 
-            ChequeEmpresarialBack cb = table.getUltimoRegistro();
+            ChequeEmpresarial cb = table.getUltimoRegistro();
             subtotal = cb.valorDevedorAtualizado;
-            
+
             // honorarios = valorDevedorAtualizado 
             honorarios = subtotal * (cb.infoParaCalculo.formHonorarios / 100);
             // multa = ((valorDevedorAtualizado + honorarios) * multa_sob_contrato grupo 2 / 100
@@ -126,23 +133,6 @@ namespace calculadora_api.Services
             total = honorarios + subtotal + multa;
 
             return new Totais(subtotal, honorarios, multa, total);
-        }
-
-
-
-
-
-        private float getIndiceDataBase(string indice, DateTime date, InfoParaCalculo formDefaultValues) {
-            return indiceController.getIndiceDataBase(
-                indice,
-                date,
-                formDefaultValues.formIndiceEncargos
-            );
-        }
-
-        private int numberOfDays(DateTime minor, DateTime major) {
-            int days = major.Subtract(minor).Days;
-            return days >= 0 ? days : minor.Subtract(major).Days;
         }
     }
 }

@@ -16,15 +16,12 @@ namespace calculadora_api.Controllers
     public class ParceladoPreController : ControllerBase
     {
         private readonly UserContext _context;
-
-        private readonly IUser _user;
-
-        private IndiceController indiceController;
+        private readonly IndiceController indiceController;
 
         public ParceladoPreController(UserContext context)
         {
             _context = context;
-            if (indiceController == null) 
+            if (indiceController == null)
                 indiceController = new IndiceController(_context);
         }
 
@@ -32,7 +29,8 @@ namespace calculadora_api.Controllers
         public ActionResult<IEnumerable<ParceladoPre>> GetParceladoPreItems([FromQuery] string contractRef)
         {
             List<ParceladoPre> parceladosPre = _context.ParceladoPreItems.Where(a => a.contractRef == contractRef).ToList();
-            if (parceladosPre.Count > 0) {
+            if (parceladosPre.Count > 0)
+            {
                 return parceladosPre;
                 //return calcular(cheques);
             }
@@ -98,16 +96,19 @@ namespace calculadora_api.Controllers
         // Object dados -> json dos dados do formulário
         [Route("incluir-parcelas")]
         [HttpPost]
-        public ActionResult<JObject> incluirParcelas([FromBody] JObject dados) {
+        public ActionResult<JObject> incluirParcelas([FromBody] JObject dados)
+        {
             ParceladoPreService parceladoService = new ParceladoPreService(indiceController);
-            
+
             Tabela registros = parceladoService.calcular(dados);
             Console.WriteLine("##############################################");
             Console.WriteLine(registros.ToString());
-            
-            if (registros != null) {
+
+            if (registros != null)
+            {
                 Totais totais = parceladoService.calcularTotais(registros);
-                if (totais != null) {
+                if (totais != null)
+                {
                     Retorno retorno = new Retorno("contrato infos", registros, totais);
                     return JObject.Parse(
                         JsonConvert.SerializeObject(retorno)

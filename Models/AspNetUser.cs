@@ -22,7 +22,7 @@ namespace calculadora_api.Interfaces
 
         public IEnumerable<Claim> GetClaimsIdentity()
         {
-            return  _accessor.HttpContext.User.Claims;
+            return _accessor.HttpContext.User.Claims;
         }
     }
 }

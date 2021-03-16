@@ -21,17 +21,15 @@ namespace calculadora_api.Controllers
     {
         private readonly UserContext _context;
 
-        private IndiceController indiceController;
+        private readonly IndiceController indiceController;
 
-        private JSON jc = new JSON();
-
-        private readonly User _user;
+        private readonly JSON jc = new JSON();
 
         public ChequeEmpresarialController(UserContext context)
         {
             _context = context;
-            if (indiceController == null) 
-                indiceController = new IndiceController(_context);            
+            if (indiceController == null)
+                indiceController = new IndiceController(_context);
         }
 
 
@@ -40,85 +38,116 @@ namespace calculadora_api.Controllers
         public ActionResult<IEnumerable<ChequeEmpresarial>> GetChequeEmpresarialItems([FromQuery] string contractRef)
         {
             List<ChequeEmpresarial> cheques = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
-            if (cheques.Count > 0) {
+            if (cheques.Count > 0)
+            {
                 return cheques;
                 //return calcular(cheques);
             }
-            return NoContent(); // vai para o incluirLancamento
-        }   
+            return NoContent();
+        }
 
 
-        // //GET:/api/users/n
-        // [HttpGet("{id}")]
-        // public ActionResult<ChequeEmpresarial> ChequeEmpresarialItem(int id)
-        // {
-        //     var chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
+        //GET:/api/users/n
+        [HttpGet("{id}")]
+        public ActionResult<ChequeEmpresarial> ChequeEmpresarialItem(int id)
+        {
+            var chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
 
-        //     if (chequeempresarialItem == null)
-        //     {
-        //         return NotFound();
-        //     }
+            if (chequeempresarialItem == null)
+            {
+                return NotFound();
+            }
 
-        //     return chequeempresarialItem;
-        // }
-
-
-        // [HttpPost]
-        // public ActionResult PostChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
-        // {
-        //     Console.WriteLine("---------------------------------------------------");
-        //     foreach (var chequeEmpresarial in chequeEmpresarialList)
-        //     {
-        //         _context.ChequeEmpresarialItems.Add(chequeEmpresarial);
-        //         _context.SaveChanges();
-        //     }
-        //     return NoContent();
-        // }
+            return chequeempresarialItem;
+        }
 
 
-        // [HttpPut]
-        // public ActionResult PutChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
-        // {
-        //     foreach (var chequeEmpresarial in chequeEmpresarialList)
-        //     {
-        //         Console.WriteLine(chequeEmpresarial);
-
-        //         _context.Entry(chequeEmpresarial).State = EntityState.Modified;
-        //         _context.SaveChanges();
-        //     }
-
-        //     return NoContent();
-        // }
+        [HttpPost]
+        public ActionResult PostChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
+        {
+            Console.WriteLine("---------------------------------------------------");
+            foreach (var chequeEmpresarial in chequeEmpresarialList)
+            {
+                _context.ChequeEmpresarialItems.Add(chequeEmpresarial);
+                _context.SaveChanges();
+            }
+            return NoContent();
+        }
 
 
-        // [HttpDelete("{id}")]
-        // public ActionResult<ChequeEmpresarial> DeleteChequeEmpresarialItem(int id)
-        // {
-        //     var chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
+        [HttpPut]
+        public ActionResult PutChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
+        {
+            foreach (var chequeEmpresarial in chequeEmpresarialList)
+            {
+                Console.WriteLine(chequeEmpresarial);
 
-        //     if (chequeempresarialItem == null)
-        //     {
-        //         return NotFound();
-        //     }
+                _context.Entry(chequeEmpresarial).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
 
-        //     _context.ChequeEmpresarialItems.Remove(chequeempresarialItem);
-        //     _context.SaveChanges();
-
-        //     return chequeempresarialItem;
-        // }
+            return NoContent();
+        }
 
 
+        [HttpDelete("{id}")]
+        public ActionResult<ChequeEmpresarial> DeleteChequeEmpresarialItem(int id)
+        {
+            var chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
 
-        // // Object dados -> json dos dados do formulário
+            if (chequeempresarialItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.ChequeEmpresarialItems.Remove(chequeempresarialItem);
+            _context.SaveChanges();
+
+            return chequeempresarialItem;
+        }
+
+
+
+        // Object dados -> json dos dados do formulário
+        [Route("incluir-lancamento")]
+        [HttpPost]
+        public ActionResult<JObject> incluirLancamento([FromBody] JObject dados)
+        {
+            string contractRef = dados.SelectToken("contractRef").ToString();
+            InfoLancamento infoLancamento = InfoLancamento.parse(dados.SelectToken("infoLancamento"));
+            InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(dados.SelectToken("infoParaCalculo"));
+            LancamentosService lancamentosService = new LancamentosService(indiceController);
+            ChequeEmpresarial novoCheque;
+            Tabela table = new Tabela();
+
+            table.carregarRegistros(dados.SelectToken("table"));
+
+            if (!table.temRegistros())
+            {
+                novoCheque = lancamentosService.calcular(contractRef, infoParaCalculo, infoLancamento);
+            }
+            else
+            {
+                novoCheque = lancamentosService.calcular(contractRef, infoParaCalculo, infoLancamento, table.getUltimoRegistro());
+            }
+
+            if (!novoCheque.isEmpty())
+            {
+                table.adicionarRegistro(novoCheque);
+                Totais totais = lancamentosService.calcularTotais(table);
+                Retorno retorno = new Retorno(contractRef, table, totais);
+                return JObject.Parse(JsonConvert.SerializeObject(retorno));
+            }
+
+            return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
+        }
+
         // [Route("incluir-lancamento")]
         // [HttpPost]
         // public ActionResult<JObject> incluirLancamento([FromBody] JObject dados) {
         //     LancamentosService lancamentosService = new LancamentosService(indiceController);
-            
+
         //     Tabela registros = lancamentosService.calcular(dados);
-        //     Console.WriteLine("##############################################");
-        //     Console.WriteLine(registros.ToString());
-            
         //     if (registros != null) {
         //         Totais totais = lancamentosService.calcularTotais(registros);
         //         if (totais != null) {
@@ -131,24 +160,6 @@ namespace calculadora_api.Controllers
         //     return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
         // }
 
-
-
-        // // Object dados -> json dos dados do formulário
-        // [Route("incluir-lancamento")]
-        // [HttpPost]
-        // public String incluirLancamento([FromBody] Object dados) {            
-            
-        //     dynamic dynamic = JsonConvert.DeserializeObject(dados.ToString());
-        //     DadosLancamento dadosLancamento = new DadosLancamento(dynamic);
-
-        //     ChequeEmpresarialBack cheque = new ChequeEmpresarialBack(dadosLancamento);
-        //     LancamentosService lancamentosService = new LancamentosService(indiceController);
-
-        //     List<ChequeEmpresarialBack> registros = new List<ChequeEmpresarialBack>();
-        //     cheque = lancamentosService.calcular(cheque, dynamic["table"]);
-        //     registros.Add(cheque);            
-        //     return lancamentosService.calcularTotais(registros, dadosLancamento);
-        // } 
 
     }
 }

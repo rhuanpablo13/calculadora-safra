@@ -6,8 +6,9 @@ using Newtonsoft.Json.Linq;
 namespace calculadora_api.Models
 
 {
-    public class DadosLancamento {
-        
+    public class DadosLancamento
+    {
+
         private dynamic dynamic { get; set; }
 
         public string contractRef { get; set; }
@@ -26,18 +27,21 @@ namespace calculadora_api.Models
 
 
 
-        public DadosLancamento(JObject dados) {
+        public DadosLancamento(JObject dados)
+        {
             Object tmp = dados.ToObject<Object>();
             dynamic = JsonConvert.DeserializeObject(dados.ToString());
         }
 
 
-        public DadosLancamento(dynamic dynamic) {
+        public DadosLancamento(dynamic dynamic)
+        {
             this.dynamic = dynamic;
         }
 
 
-        public void parse() {
+        public void parse()
+        {
             contractRef = dynamic["contractRef"];
             formDataCalculo = dynamic["infoParaCalculo"]["formDataCalculo"];
             formMulta = dynamic["infoParaCalculo"]["formMulta"];
@@ -53,7 +57,8 @@ namespace calculadora_api.Models
             valorLancamento = dynamic["infoLancamento"]["valorLancamento"];
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "RegistroParaCalculo: ["
             + "\n\t formDataCalculo -> " + formDataCalculo
             + "\n\t formMulta -> " + formMulta
@@ -68,6 +73,6 @@ namespace calculadora_api.Models
             + "\n\t dataBaseAtual -> " + dataBaseAtual
             + "\n\t valorLancamento -> " + valorLancamento
             + "\n]\n\n";
-        }    
+        }
     }
-}   
+}

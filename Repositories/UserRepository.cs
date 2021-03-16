@@ -19,7 +19,7 @@ namespace calculadora_api.Repositories
         public void Adicionar(AspNetUser entidade)
         {
             Console.WriteLine(entidade.Name);
-            
+
             // entidade.UsuarioRegistro = _user.Name
             // DbContext.MinhaEntidade.Add(entidade);
             // DbContext.SaveChanges();

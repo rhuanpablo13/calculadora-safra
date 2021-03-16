@@ -8,18 +8,21 @@ namespace calculadora_api.Models
     public class TabelaParcelado
     {
 
-        private List<ParceladoPre> registros { get;set; }
+        private List<ParceladoPre> registros { get; set; }
 
 
-        public TabelaParcelado() {
+        public TabelaParcelado()
+        {
             registros = new List<ParceladoPre>();
         }
 
 
 
-        public void carregarRegistrosTabela(JObject dados) {
+        public void carregarRegistrosTabela(JObject dados)
+        {
             var temp = dados.SelectToken("table");
-            if (temp != null) {
+            if (temp != null)
+            {
                 this.registros.Clear();
                 this.registros = temp.ToObject<List<ParceladoPre>>();
             }
@@ -31,25 +34,31 @@ namespace calculadora_api.Models
         // dtVencimento
         // vlNoVencimento
         // status
-        public void carregarRegistrosParcelas(JObject dados) {
+        public void carregarRegistrosParcelas(JObject dados)
+        {
             var temp = dados.SelectToken("tableParcelas");
-            if (temp != null) {
+            if (temp != null)
+            {
                 this.registros.Clear();
                 this.registros = temp.ToObject<List<ParceladoPre>>();
             }
         }
 
 
-        public bool temRegistros() {
+        public bool temRegistros()
+        {
             return registros.Count > 0;
         }
 
 
 
-        public override string ToString() {
+        public override string ToString()
+        {
             string str = "";
-            if (registros.Count > 0) {
-                foreach (ParceladoPre item in registros) {
+            if (registros.Count > 0)
+            {
+                foreach (ParceladoPre item in registros)
+                {
                     str += item.ToString() + "\n";
                 }
             }
@@ -57,4 +66,4 @@ namespace calculadora_api.Models
         }
     }
 
-}   
+}
