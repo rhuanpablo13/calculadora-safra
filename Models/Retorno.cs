@@ -17,7 +17,7 @@ namespace calculadora_api.Models
         public Totais rodape { get; set; }
 
 
-        public Retorno(string contractRef, Tabela tabela, Totais rodape)
+        public Retorno(string contractRef, Tabela<ChequeEmpresarial> tabela, Totais rodape)
         {
             this.contractRef = contractRef;
             this.tabela = tabela.getRegistros();

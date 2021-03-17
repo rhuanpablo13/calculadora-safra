@@ -23,39 +23,40 @@ namespace calculadora_api.Services
         }
 
 
-        public Tabela calcular(JObject dados)
+        public Tabela<ParceladoPre> calcular(JObject dados)
         {
-            DadosParceladoPre dadosParcela = new DadosParceladoPre(dados);
-            dadosParcela.parse();
+            // DadosParceladoPre dadosParcela = new DadosParceladoPre(dados);
+            // dadosParcela.parse();
 
-            Tabela tabela = new Tabela();
-            tabela.carregarRegistros(dados);
+            // Tabela tabela = new Tabela();
+            // tabela.carregarRegistros(dados);
 
-            if (tabela.temRegistros())
-            {
-                return calcular(dadosParcela, tabela);
-            }
-            var parcela = new ParceladoPre();
-            //cheque.copyFromDadosLancamento(dadosParcela);
+            // if (tabela.temRegistros())
+            // {
+            //     return calcular(dadosParcela, tabela);
+            // }
+            // var parcela = new ParceladoPre();
+            // //cheque.copyFromDadosLancamento(dadosParcela);
 
-            tabela.adicionarRegistro(calcular(parcela));
-            return tabela;
+            // tabela.adicionarRegistro(calcular(parcela));
+            // return tabela;
+            return null;
         }
 
 
 
-        public Tabela calcular(DadosParceladoPre dadosLancamento, Tabela table)
-        {
-            // ParceladoPre novoRegistro = new ParceladoPre();
-            // novoRegistro.copyFromDadosLancamento(dadosLancamento);
-            // novoRegistro.dataBase = registroSuperior.dataBaseAtual;
-            // novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
-            // novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
-            // novoRegistro.indiceBA = dadosLancamento.formIndice == null ? registroSuperior.indiceBA : dadosLancamento.formIndice;
-            // novoRegistro.indiceDB = novoRegistro.indiceBA;
-            // table.adicionarRegistro(calcular(novoRegistro));
-            return table;
-        }
+        // public Tabela calcular(DadosParceladoPre dadosLancamento, Tabela table)
+        // {
+        //     // ParceladoPre novoRegistro = new ParceladoPre();
+        //     // novoRegistro.copyFromDadosLancamento(dadosLancamento);
+        //     // novoRegistro.dataBase = registroSuperior.dataBaseAtual;
+        //     // novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
+        //     // novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
+        //     // novoRegistro.indiceBA = dadosLancamento.formIndice == null ? registroSuperior.indiceBA : dadosLancamento.formIndice;
+        //     // novoRegistro.indiceDB = novoRegistro.indiceBA;
+        //     // table.adicionarRegistro(calcular(novoRegistro));
+        //     return table;
+        // }
 
 
 
@@ -109,7 +110,7 @@ namespace calculadora_api.Services
         }
 
 
-        public Totais calcularTotais(Tabela table)
+        public Totais calcularTotais(Tabela<ParceladoPre> table)
         {
 
             float subtotal = 0;
@@ -122,8 +123,8 @@ namespace calculadora_api.Services
                 return null;
             }
 
-            ChequeEmpresarial cb = table.getUltimoRegistro();
-            subtotal = cb.valorDevedorAtualizado;
+            ParceladoPre cb = table.getUltimoRegistro();
+            // subtotal = cb.valorDevedorAtualizado;
 
             // honorarios = valorDevedorAtualizado 
             honorarios = subtotal * (cb.infoParaCalculo.formHonorarios / 100);
