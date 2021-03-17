@@ -118,7 +118,7 @@ namespace calculadora_api.Controllers
             InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(dados.SelectToken("infoParaCalculo"));
             LancamentosService lancamentosService = new LancamentosService(indiceController);
             ChequeEmpresarial novoCheque;
-            Tabela table = new Tabela();
+            Tabela<ChequeEmpresarial> table = new Tabela<ChequeEmpresarial>();
 
             table.carregarRegistros(dados.SelectToken("table"));
 

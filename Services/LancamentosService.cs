@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using Converter;
 using Newtonsoft.Json;
-using System.Linq; 
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using calculadora_api.Controllers;
 
@@ -112,7 +112,7 @@ namespace calculadora_api.Services
         }
 
 
-        public Totais calcularTotais(Tabela table)
+        public Totais calcularTotais(Tabela<ChequeEmpresarial> table)
         {
 
             float subtotal = 0;

@@ -7,14 +7,14 @@ using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
 {
-    public class Tabela
+    public class Tabela<T>
     {
-        private List<ChequeEmpresarial> registros { get; set; }
+        private List<T> registros { get; set; }
 
         public Tabela()
         {
             if (registros == null)
-                registros = new List<ChequeEmpresarial>();
+                registros = new List<T>();
         }
 
         public void carregarRegistros(JToken table)
@@ -22,11 +22,11 @@ namespace calculadora_api.Models
             if (table != null)
             {
                 registros.Clear();
-                registros = table.ToObject<List<ChequeEmpresarial>>();
+                registros = table.ToObject<List<T>>();
             }
         }
 
-        public void adicionarRegistro(ChequeEmpresarial registro)
+        public void adicionarRegistro(T registro)
         {
             registros.Add(registro);
         }
@@ -36,18 +36,12 @@ namespace calculadora_api.Models
             return registros.Count > 0;
         }
 
-        public ChequeEmpresarial getUltimoRegistro()
+        public T getUltimoRegistro()
         {
-            return registros.Count > 0 ? registros[^1] : null;
+            return registros.Count > 0 ? registros[^1] : default(T);
         }
 
-        public List<ChequeEmpresarial> getRegistros() => registros;
-
-
-        internal JObject toJson()
-        {
-            return JObject.Parse(JsonConvert.SerializeObject(registros));
-        }
+        public List<T> getRegistros() => registros;
 
 
         public override string ToString()
@@ -55,7 +49,7 @@ namespace calculadora_api.Models
             string str = "";
             if (registros.Count > 0)
             {
-                foreach (ChequeEmpresarial item in registros)
+                foreach (T item in registros)
                 {
                     str += item.ToString() + "\n";
                 }
