@@ -15,10 +15,10 @@ namespace calculadora_api.Controllers
     [ApiController]
     public class ParceladoPreController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly ApplicationContext _context;
         private readonly IndiceController indiceController;
 
-        public ParceladoPreController(UserContext context)
+        public ParceladoPreController(ApplicationContext context)
         {
             _context = context;
             if (indiceController == null)

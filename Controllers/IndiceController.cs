@@ -13,9 +13,9 @@ namespace calculadora_api.Controllers
     [ApiController]
     public class IndiceController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly ApplicationContext _context;
 
-        public IndiceController(UserContext context)
+        public IndiceController(ApplicationContext context)
         {
             _context = context;
         }

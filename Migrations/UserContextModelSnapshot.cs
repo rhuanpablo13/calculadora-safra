@@ -8,7 +8,7 @@ using calculadora_api.Models;
 
 namespace calculadora_api.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(ApplicationContext))]
     partial class UserContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

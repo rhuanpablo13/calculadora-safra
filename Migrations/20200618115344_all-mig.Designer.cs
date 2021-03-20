@@ -9,7 +9,7 @@ using calculadora_api.Models;
 
 namespace calculadora_api.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(ApplicationContext))]
     [Migration("20200618115344_all-mig")]
     partial class allmig
     {

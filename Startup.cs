@@ -56,7 +56,7 @@ namespace calculadora_api
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
 
-            services.AddDbContext<UserContext>
+            services.AddDbContext<ApplicationContext>
                 (opt => opt.UseSqlServer(Configuration["Data:UserAPIConnection:ConnectionString"]));
 
             services.AddScoped<IUser, User>();

@@ -9,7 +9,7 @@ using calculadora_api.Models;
 
 namespace calculadora_api.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(ApplicationContext))]
     [Migration("20200615033334_dateTimeMigration3")]
     partial class dateTimeMigration3
     {
