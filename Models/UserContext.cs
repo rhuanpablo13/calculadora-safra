@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace calculadora_api.Models
 {
-    public class UserContext : DbContext
+    public class ApplicationContext : DbContext
     {
 
         public DbSet<User> UserItems { get; set; }
@@ -15,6 +15,6 @@ namespace calculadora_api.Models
 
 
 
-        public UserContext(DbContextOptions<UserContext> options) : base(options) { }
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     }
 }

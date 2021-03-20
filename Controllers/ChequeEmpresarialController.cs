@@ -19,13 +19,13 @@ namespace calculadora_api.Controllers
     [ApiController]
     public class ChequeEmpresarialController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly ApplicationContext _context;
 
         private readonly IndiceController indiceController;
 
         private readonly JSON jc = new JSON();
 
-        public ChequeEmpresarialController(UserContext context)
+        public ChequeEmpresarialController(ApplicationContext context)
         {
             _context = context;
             if (indiceController == null)

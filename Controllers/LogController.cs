@@ -11,9 +11,9 @@ namespace calculadora_api.Controllers
     [ApiController]
     public class LogController : ControllerBase
     {
-        private readonly UserContext _context;
+        private readonly ApplicationContext _context;
 
-        public LogController(UserContext context)
+        public LogController(ApplicationContext context)
         {
             _context = context;
         }
