@@ -6,57 +6,29 @@ using Newtonsoft.Json.Linq;
 namespace calculadora_api.Models
 
 {
-    // {
-    //   contractRef: 'SBA.132393/20193400197350000 - NÃO DEFINIDOfalse',
-    //   table: [],
-    //   infoParaCalculo: {
-    //     formDataCalculo: '2018-12-01',
-    //     formUltimaAtualizacao: '',
-    //     formMulta: 10,
-    //     formJuros: 10,
-    //     formHonorarios: 10,
-    //     formMultaSobContrato: 10,
-    //     formIndice: 'INPC/IBGE',
-    //     formIndiceEncargos: '',
-    //     formDesagio: 2,
-    //     isDate: false
-    //   },
-    //   tableParcelas: [
-    //     {
-    //       nparcelas: 1,
-    //       parcelaInicial: 1,
-    //       dataVencimento: '2018-01-01',
-    //       valorNoVencimento: 1000,
-    //       status: 'aberto'
-    //     }
-    //   ]
-    // }
-
 
     public class ParceladoPre
     {
         [Key]
         public int Id { get; set; }
-        public int nparcelas { get; set; }
-        public float parcelaInicial { get; set; }
-        public DateTime dataVencimento { get; set; }
+        public Parcela parcela = new Parcela(); 
         public string indiceDV { get; set; }
         public float indiceDataVencimento { get; set; }
         public string indiceDCA { get; set; }
         public float indiceDataCalcAmor { get; set; }
         public DateTime dataCalcAmor { get; set; }
 
-        public float valorNoVencimento { get; set; }
-        public EncargosMonetarios encargosMonetarios { get; set; }
+        
+        public EncargosMonetarios encargosMonetarios = new EncargosMonetarios();
 
         public float subtotal { get; set; }
         public float valorPMTVincenda { get; set; }
         public float amortizacao { get; set; }
         public float totalDevedor { get; set; }
         public string contractRef { get; set; }
-        public string status { get; set; }
+        
         public DateTime ultimaAtualizacao { get; set; }
-        public InfoParaCalculo infoParaCalculo { get; set; }
+        public InfoParaCalculo infoParaCalculo = new InfoParaCalculo();
         public string tipoParcela { get; set; }
         public string infoParaAmortizacao { get; set; }
         public Boolean vincenda { set; get; }
@@ -70,16 +42,40 @@ namespace calculadora_api.Models
 
         public ParceladoPre() { }
 
-        public void popularParceladoPre(string contractRef, InfoParaCalculo infoParaCalculo)
+        public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = infoParaCalculo;
+            this.parcela = parcela;
+            this.indiceDCA = infoParaCalculo.formIndice;
+            this.indiceDV = infoParaCalculo.formIndice;
 
-            this.nparcelas = nparcelas;
-            this.parcelaInicial = parcelaInicial;
-            this.dataVencimento = dataVencimento;
-            this.valorNoVencimento = valorNoVencimento;
-            this.status = status;
+            this.dataCalcAmor = parcela.dataVencimento; //revisar
+        }
+        
+
+        public override string ToString()
+        {
+            return " ParceladoPre: ["
+                + "\n\t Id -> " + Id 
+                + "\n\t parcela -> " + parcela 
+                + "\n\t indiceDV -> " + indiceDV 
+                + "\n\t indiceDataVencimento -> " + indiceDataVencimento 
+                + "\n\t indiceDCA -> " + indiceDCA 
+                + "\n\t indiceDataCalcAmor -> " + indiceDataCalcAmor 
+                + "\n\t dataCalcAmor -> " + dataCalcAmor 
+                + "\n\t encargosMonetarios -> " + encargosMonetarios 
+                + "\n\t subtotal -> " + subtotal 
+                + "\n\t valorPMTVincenda -> " + valorPMTVincenda 
+                + "\n\t amortizacao -> " + amortizacao 
+                + "\n\t totalDevedor -> " + totalDevedor 
+                + "\n\t contractRef -> " + contractRef 
+                + "\n\t ultimaAtualizacao -> " + ultimaAtualizacao 
+                + "\n\t infoParaCalculo -> " + infoParaCalculo 
+                + "\n\t tipoParcela -> " + tipoParcela 
+                + "\n\t infoParaAmortizacao -> " + infoParaAmortizacao 
+                + "\n\t vincenda -> " + vincenda + "\n]"
+            ;
         }
     }
 

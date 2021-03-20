@@ -10,14 +10,14 @@ namespace calculadora_api.Models
 
 {
 
-    public class Retorno
+    public class Retorno<T>
     {
         public string contractRef { get; set; }
-        public List<ChequeEmpresarial> tabela { get; set; }
+        public List<T> tabela { get; set; }
         public Totais rodape { get; set; }
 
 
-        public Retorno(string contractRef, Tabela<ChequeEmpresarial> tabela, Totais rodape)
+        public Retorno(string contractRef, Tabela<T> tabela, Totais rodape)
         {
             this.contractRef = contractRef;
             this.tabela = tabela.getRegistros();

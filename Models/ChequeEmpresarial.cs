@@ -57,7 +57,7 @@ namespace calculadora_api.Models
             infoParaCalculo = new InfoParaCalculo();
         }
 
-        public void popularCheque(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento)
+        public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = infoParaCalculo;

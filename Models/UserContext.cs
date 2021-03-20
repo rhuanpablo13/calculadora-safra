@@ -1,10 +1,12 @@
 using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace calculadora_api.Models
 {
     public class UserContext : DbContext
     {
+
         public DbSet<User> UserItems { get; set; }
         public DbSet<ChequeEmpresarial> ChequeEmpresarialItems { get; set; }
         public DbSet<ParceladoPre> ParceladoPreItems { get; set; }

@@ -135,30 +135,12 @@ namespace calculadora_api.Controllers
             {
                 table.adicionarRegistro(novoCheque);
                 Totais totais = lancamentosService.calcularTotais(table);
-                Retorno retorno = new Retorno(contractRef, table, totais);
+                Retorno<ChequeEmpresarial> retorno = new Retorno<ChequeEmpresarial>(contractRef, table, totais);
                 return JObject.Parse(JsonConvert.SerializeObject(retorno));
             }
 
             return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
         }
-
-        // [Route("incluir-lancamento")]
-        // [HttpPost]
-        // public ActionResult<JObject> incluirLancamento([FromBody] JObject dados) {
-        //     LancamentosService lancamentosService = new LancamentosService(indiceController);
-
-        //     Tabela registros = lancamentosService.calcular(dados);
-        //     if (registros != null) {
-        //         Totais totais = lancamentosService.calcularTotais(registros);
-        //         if (totais != null) {
-        //             Retorno retorno = new Retorno("contrato infos", registros, totais);
-        //             return JObject.Parse(
-        //                 JsonConvert.SerializeObject(retorno)
-        //             );
-        //         }
-        //     }
-        //     return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
-        // }
 
 
     }

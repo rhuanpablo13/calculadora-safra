@@ -98,58 +98,24 @@ namespace calculadora_api.Controllers
         [HttpPost]
         public ActionResult<JObject> incluirParcelas([FromBody] JObject dados)
         {
-
             string contractRef = dados.SelectToken("contractRef").ToString();
             InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(dados.SelectToken("infoParaCalculo"));
             List<Parcela> parcelas = Parcela.parse(dados.SelectToken("tableParcelas"));
             ParceladoPreService parceladoPreService = new ParceladoPreService(indiceController);
+            Tabela<ParceladoPre> table = new Tabela<ParceladoPre>();
 
-            // table.carregarRegistros(dados.SelectToken("table"));
+            List<ParceladoPre> rgs = parceladoPreService.calcular(contractRef, infoParaCalculo, parcelas);
 
-            // if (!table.temRegistros())
-            // {
-            //     novoCheque = lancamentosService.calcular(contractRef, infoParaCalculo, infoLancamento);
-            // }
-            // else
-            // {
-            //     novoCheque = lancamentosService.calcular(contractRef, infoParaCalculo, infoLancamento, table.getUltimoRegistro());
-            // }
+            foreach (ParceladoPre item in rgs)
+            {
+                table.adicionarRegistro(item);
+            }
+            Totais totais = parceladoPreService.calcularTotais(table);
+            Retorno<ParceladoPre> retorno = new Retorno<ParceladoPre>(contractRef, table, totais);
+            return JObject.Parse(JsonConvert.SerializeObject(retorno));
 
-            // if (!novoCheque.isEmpty())
-            // {
-            //     table.adicionarRegistro(novoCheque);
-            //     Totais totais = lancamentosService.calcularTotais(table);
-            //     Retorno retorno = new Retorno(contractRef, table, totais);
-            //     return JObject.Parse(JsonConvert.SerializeObject(retorno));
-            // }
-
-            return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
+            // return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
         }
 
-
-        // Object dados -> json dos dados do formulário
-        // [Route("incluir-parcelas")]
-        // [HttpPost]
-        // public ActionResult<JObject> incluirParcelas([FromBody] JObject dados)
-        // {
-        //     ParceladoPreService parceladoService = new ParceladoPreService(indiceController);
-
-        //     Tabela registros = parceladoService.calcular(dados);
-        //     Console.WriteLine("##############################################");
-        //     Console.WriteLine(registros.ToString());
-
-        //     if (registros != null)
-        //     {
-        //         Totais totais = parceladoService.calcularTotais(registros);
-        //         if (totais != null)
-        //         {
-        //             Retorno retorno = new Retorno("contrato infos", registros, totais);
-        //             return JObject.Parse(
-        //                 JsonConvert.SerializeObject(retorno)
-        //             );
-        //         }
-        //     }
-        //     return JObject.Parse("{'success': false, 'msg':'Algo de errado aconteceu'}");
-        // }
     }
 }

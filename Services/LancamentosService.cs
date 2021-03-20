@@ -26,7 +26,7 @@ namespace calculadora_api.Services
         public ChequeEmpresarial calcular(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento)
         {
             ChequeEmpresarial cheque = new ChequeEmpresarial();
-            cheque.popularCheque(contractRef, infoParaCalculo, infoLancamento);
+            cheque.carregarDadosEntrada(contractRef, infoParaCalculo, infoLancamento);
             return calcular(cheque);
         }
 
@@ -34,7 +34,7 @@ namespace calculadora_api.Services
         public ChequeEmpresarial calcular(string contractRef, InfoParaCalculo infoParaCalculo, InfoLancamento infoLancamento, ChequeEmpresarial registroSuperior)
         {
             ChequeEmpresarial novoRegistro = new ChequeEmpresarial();
-            novoRegistro.popularCheque(contractRef, infoParaCalculo, infoLancamento);
+            novoRegistro.carregarDadosEntrada(contractRef, infoParaCalculo, infoLancamento);
             novoRegistro.dataBase = registroSuperior.dataBaseAtual;
             novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
             novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
