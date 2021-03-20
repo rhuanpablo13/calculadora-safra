@@ -23,24 +23,17 @@ namespace calculadora_api.Services
         }
 
 
-        public Tabela<ParceladoPre> calcular(JObject dados)
+        public List<ParceladoPre> calcular(string contractRef, InfoParaCalculo infoParaCalculo, List<Parcela> parcelas)
         {
-            // DadosParceladoPre dadosParcela = new DadosParceladoPre(dados);
-            // dadosParcela.parse();
-
-            // Tabela tabela = new Tabela();
-            // tabela.carregarRegistros(dados);
-
-            // if (tabela.temRegistros())
-            // {
-            //     return calcular(dadosParcela, tabela);
-            // }
-            // var parcela = new ParceladoPre();
-            // //cheque.copyFromDadosLancamento(dadosParcela);
-
-            // tabela.adicionarRegistro(calcular(parcela));
-            // return tabela;
-            return null;
+            ParceladoPre parcelado = new ParceladoPre();
+            List<ParceladoPre> ls = new List<ParceladoPre>();
+            foreach (var parcela in parcelas)
+            {
+                parcelado.carregarDadosEntrada(contractRef, infoParaCalculo, parcela);
+                parcelado = calcular(parcelado);
+                ls.Add(parcelado);
+            }
+            return ls;
         }
 
 
@@ -60,39 +53,57 @@ namespace calculadora_api.Services
 
 
 
-        private ChequeEmpresarial calcular(ParceladoPre dadosLancamento)
+        private ParceladoPre calcular(ParceladoPre p)
         {
+            InfoParaCalculo ipc = p.infoParaCalculo;
+            
+            //dias
+            p.encargosMonetarios.jurosAm.dias = UService.numberOfDays(p.dataCalcAmor, p.parcela.dataVencimento);
+            //indiceDataVencimento
+            p.indiceDataVencimento = UService.getIndice(
+                p.indiceDV, p.parcela.dataVencimento, ipc.formIndiceEncargos, indiceController
+            );
+            //indiceDataCalcAmor
+            p.indiceDataCalcAmor = UService.getIndice(
+                p.indiceDCA, p.dataCalcAmor, ipc.formIndiceEncargos, indiceController
+            );
 
-            // dadosLancamento.encargosMonetarios.jurosAm.dias = numberOfDays(dadosLancamento.dataCalcAmor, dadosLancamento.dataVencimento);
+            //correcaoPeloIndice
+            p.encargosMonetarios.correcaoPeloIndice = (
+                (p.parcela.valorNoVencimento / p.indiceDataVencimento) * p.indiceDataCalcAmor
+            ) - p.parcela.valorNoVencimento;
+            //percentsJuros
+            p.encargosMonetarios.jurosAm.percentsJuros = (p.infoParaCalculo.formJuros / 30) * p.encargosMonetarios.jurosAm.dias;
+            //moneyValue
+            p.encargosMonetarios.jurosAm.moneyValue = ((p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (p.infoParaCalculo.formJuros / 100);
+            
+            //multa
+            p.encargosMonetarios.multa = (p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + (p.infoParaCalculo.formMulta / 100));
+            //subtotal
+            p.subtotal = p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa;
+            //valorPMTVincenda
+            p.valorPMTVincenda = p.parcela.valorNoVencimento * p.infoParaCalculo.desagio;
+            
+            p.amortizacao = -1;
 
-            // dadosLancamento.indiceDataVencimento = getIndiceDataBase(dadosLancamento.indiceDV, dadosLancamento.dataVencimento, dadosLancamento.infoParaCalculo);
-            // dadosLancamento.indiceDataCalcAmor = getIndiceDataBase(dadosLancamento.indiceDCA, dadosLancamento.dataCalcAmor, dadosLancamento.infoParaCalculo);
+            //totalDevedor
+            p.totalDevedor = p.vincenda 
+            ? p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa + p.amortizacao 
+            : p.valorPMTVincenda;
 
-            // if (dadosLancamento.indiceDV == "Encargos Contratuais %")
-            //     dadosLancamento.encargosMonetarios.correcaoPeloIndice = ((dadosLancamento.valorNoVencimento * (dadosLancamento.indiceDataBaseAtual / 100)) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
-            // else
-            //     dadosLancamento.encargosMonetarios.correcaoPeloIndice = (dadosLancamento.valorDevedor / dadosLancamento.indiceDataBase) * dadosLancamento.indiceDataBaseAtual - dadosLancamento.valorDevedor;
+            p.infoParaCalculo = ipc;
 
-            // dadosLancamento.encargosMonetarios.jurosAm.percentsJuros = (dadosLancamento.infoParaCalculo.formJuros / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias;
-            // dadosLancamento.encargosMonetarios.jurosAm.moneyValue = ((dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice) / 30) * dadosLancamento.encargosMonetarios.jurosAm.dias * (dadosLancamento.infoParaCalculo.formJuros / 100);
-
-            // dadosLancamento.encargosMonetarios.multa = ((dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue + (dadosLancamento.infoParaCalculo.formMulta / 100);
-            // dadosLancamento.subtotal = dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice + dadosLancamento.encargosMonetarios.jurosAm.moneyValue + dadosLancamento.encargosMonetarios.multa;
-            // dadosLancamento.valorPMTVincenda = dadosLancamento.valorNoVencimento * dadosLancamento.infoParaCalculo.desagio;
-            // // dadosLancamento.amortizacao = null;
-            // dadosLancamento.totalDevedor = dadosLancamento.vincenda ? dadosLancamento.valorNoVencimento + dadosLancamento.encargosMonetarios.correcaoPeloIndice + money + dadosLancamento.encargosMonetarios.multa + dadosLancamento.amortizacao : dadosLancamento.valorPMTVincenda;
-            // dadosLancamento.status = status;
-
-            // if (vincenda) {
+            // if (p.vincenda) {
             //     totalParcelasVencidas = [
-            //         valorNoVencimento += dadosLancamento.valorNoVencimento,
-            //         correcaoPeloIndice += dadosLancamento.correcaoPeloIndice,
+            //         valorNoVencimento += p.valorNoVencimento,
+            //         correcaoPeloIndice += p.correcaoPeloIndice,
             //         money += money,
             //         multa += multa,
             //         subTotal += subTotal,
             //         amortizacao += amortizacao,
             //         totalDevedor += totalDevedor
             //     ];
+            // }
 
             // } else {
             //     totalParcelasVincendas = [
@@ -103,10 +114,9 @@ namespace calculadora_api.Services
 
 
             // Console.WriteLine("*********** dados calculados ***************");
-            // Console.WriteLine(dadosLancamento.ToString());
+            // Console.WriteLine(p.ToString());
 
-            // return dadosLancamento;
-            return null;
+            return p;
         }
 
 
