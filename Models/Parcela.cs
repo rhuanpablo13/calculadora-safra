@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
@@ -22,6 +23,11 @@ namespace calculadora_api.Models
         {
             List<Parcela> info = infoParcelaJson.ToObject<List<Parcela>>();
             return info;
+        }
+
+
+        public static Parcela parse(string jsonString) {
+            return JsonSerializer.Deserialize<Parcela>(jsonString);
         }
 
 

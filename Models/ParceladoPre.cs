@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using calculadora_api.Dao;
+// using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace calculadora_api.Models
 
@@ -37,7 +39,7 @@ namespace calculadora_api.Models
         public ParceladoPre(JObject dados)
         {
             Object tmp = dados.ToObject<Object>();
-            dynamic = JsonConvert.DeserializeObject(dados.ToString());
+            dynamic = Newtonsoft.Json.JsonConvert.DeserializeObject(dados.ToString());
         }
 
         public ParceladoPre() { }
@@ -51,6 +53,30 @@ namespace calculadora_api.Models
             this.indiceDV = infoParaCalculo.formIndice;
 
             this.dataCalcAmor = parcela.dataVencimento; //revisar
+        }
+
+
+        public ParceladoPreDao parse() {
+            ParceladoPreDao dao = new ParceladoPreDao();
+            dao.Id = this.Id;
+            dao.nparcelas = this.parcela.nparcelas.ToString();
+            dao.indiceDV = this.indiceDV;
+            dao.indiceDataVencimento = this.indiceDataVencimento;
+            dao.indiceDCA = this.indiceDCA;
+            dao.indiceDataCalcAmor = this.indiceDataCalcAmor;
+            dao.dataCalcAmor = this.dataCalcAmor.ToString("yyyy-MM-dd");
+            dao.encargosMonetarios = JsonSerializer.Serialize(this.encargosMonetarios);
+            dao.subtotal = this.subtotal;
+            dao.valorPMTVincenda = this.valorPMTVincenda;
+            dao.amortizacao = this.amortizacao;
+            dao.totalDevedor = this.totalDevedor;
+            dao.contractRef = this.contractRef;
+            dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");
+            dao.infoParaCalculo = JsonSerializer.Serialize(this.infoParaCalculo);
+            dao.tipoParcela = this.tipoParcela;
+            dao.infoParaAmortizacao = this.infoParaAmortizacao;
+            dao.vincenda = this.vincenda;
+            return dao;
         }
         
 
