@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using calculadora_api.Models;
+using Converter;
 
 namespace calculadora_api.Dao
 
@@ -29,8 +31,39 @@ namespace calculadora_api.Dao
         public string infoParaCalculo { get; set; }
         public string tipoParcela { get; set; }
         public string infoParaAmortizacao { get; set; }
+        public Boolean vincenda { set; get; }
 
+
+
+        public ParceladoPre parseFrom() {
+            ParceladoPre p = new ParceladoPre();
+            p.Id = this.Id;
+            p.parcela.nparcelas = Convert.ToInt32(this.nparcelas);
+            p.parcela.parcelaInicial = this.parcelaInicial;
+            p.indiceDataVencimento = this.indiceDataVencimento;
+            p.indiceDataCalcAmor = this.indiceDataCalcAmor;
+            p.parcela.valorNoVencimento = this.valorNoVencimento;
+            p.subtotal = this.subtotal;
+            p.amortizacao = this.amortizacao;
+            p.totalDevedor = this.totalDevedor;
+            p.contractRef = this.contractRef;
+            p.parcela.dataVencimento = U.toDateTime(this.dataVencimento);
+            p.indiceDV = this.indiceDV;
+            p.indiceDCA = this.indiceDCA;
+            p.dataCalcAmor = U.toDateTime(this.dataCalcAmor);
+            p.valorPMTVincenda = this.valorPMTVincenda;
+            p.parcela.status = this.status;
+            p.ultimaAtualizacao = U.toDateTime(this.ultimaAtualizacao);
+            p.encargosMonetarios = EncargosMonetarios.parse(this.encargosMonetarios);
+            p.infoParaCalculo = InfoParaCalculo.parse(this.infoParaCalculo);
+            p.tipoParcela = this.tipoParcela;
+            p.infoParaAmortizacao = this.infoParaAmortizacao;
+            p.vincenda = this.vincenda;
+            return p;
+        }
     }
+
+
 
     // public class EncargosMonetarios
     // {

@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using calculadora_api.Services;
 using System;
 using Newtonsoft.Json;
+using calculadora_api.Dao;
 
 namespace calculadora_api.Controllers
 {
@@ -28,27 +29,32 @@ namespace calculadora_api.Controllers
         [HttpGet("pesquisar")]
         public ActionResult<IEnumerable<ParceladoPre>> GetParceladoPreItems([FromQuery] string contractRef)
         {
-            List<ParceladoPre> parceladosPre = _context.ParceladoPreItems.Where(a => a.contractRef == contractRef).ToList();
+            List<ParceladoPreDao> parceladosPre = _context.ParceladoPreItems.Where(a => a.contractRef == contractRef).ToList();
             if (parceladosPre.Count > 0)
             {
-                return parceladosPre;
-                //return calcular(cheques);
+                List<ParceladoPre> parcelados = new List<ParceladoPre>();
+                foreach (ParceladoPreDao item in parceladosPre)
+                {
+                    parcelados.Add(item.parseFrom());
+                } 
+                return parcelados;
             }
-            return NotFound(); // vai para o incluirLancamento
+            return NotFound();
         }
+
 
         //GET:      api/users/n
         [HttpGet("{id}")]
         public ActionResult<ParceladoPre> ParceladoPreItem(int id)
         {
-            var parceladoPreItem = _context.ParceladoPreItems.Find(id);
+            ParceladoPreDao parceladoPreItem = _context.ParceladoPreItems.Find(id);
 
             if (parceladoPreItem == null)
             {
                 return NotFound();
             }
 
-            return parceladoPreItem;
+            return parceladoPreItem.parseFrom();
         }
 
         //POST:     api/users
@@ -57,7 +63,7 @@ namespace calculadora_api.Controllers
         {
             foreach (var parceladoPre in parceladoPreList)
             {
-                _context.ParceladoPreItems.Add(parceladoPre);
+                _context.ParceladoPreItems.Add(parceladoPre.parse());
                 _context.SaveChanges();
             }
             return NoContent();
@@ -69,7 +75,8 @@ namespace calculadora_api.Controllers
         {
             foreach (var parceladoPre in parceladoPreList)
             {
-                _context.Entry(parceladoPre).State = EntityState.Modified;
+                ParceladoPreDao dao = parceladoPre.parse();
+                _context.Entry(dao).State = EntityState.Modified;
                 _context.SaveChanges();
             }
 
@@ -80,7 +87,7 @@ namespace calculadora_api.Controllers
         [HttpDelete("{id}")]
         public ActionResult<ParceladoPre> DeleteParceladoPreItem(int id)
         {
-            var parceladoPreItem = _context.ParceladoPreItems.Find(id);
+            ParceladoPreDao parceladoPreItem = _context.ParceladoPreItems.Find(id);
 
             if (parceladoPreItem == null)
             {
@@ -90,7 +97,7 @@ namespace calculadora_api.Controllers
             _context.ParceladoPreItems.Remove(parceladoPreItem);
             _context.SaveChanges();
 
-            return parceladoPreItem;
+            return parceladoPreItem.parseFrom();
         }
 
 
