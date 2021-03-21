@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace Converter
 {
-    public class JSON
+    public class U
     {
 
         public static float toFloat(JToken value)

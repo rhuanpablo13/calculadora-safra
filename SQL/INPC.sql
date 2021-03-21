@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "data" (
-"data" JSON NULL
+"data" U NULL
 );
 
 INSERT INTO data VALUES

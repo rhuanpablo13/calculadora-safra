@@ -1,7 +1,5 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-
-
+using System.Text.Json;
 namespace calculadora_api.Models
 
 {
@@ -16,6 +14,10 @@ namespace calculadora_api.Models
         public EncargosMonetarios()
         {
             jurosAm = new JurosAm();
+        }
+
+        public static EncargosMonetarios parse(string jsonString) {
+            return JsonSerializer.Deserialize<EncargosMonetarios>(jsonString);
         }
 
         public override string ToString()
