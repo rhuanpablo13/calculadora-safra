@@ -1,35 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using calculadora_api.Dao;
 using Converter;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace calculadora_api.Models
 {
-
-    // exemplo do json que vai ser recebido
-    // {
-    //     "table": [],
-    //     "contractRef": "SBA.132559/200110900331851 - MUTUO PRE RENEGfalse",
-    //     "infoParaCalculo": {
-    //         // grupo 2
-    //         "formDataCalculo": "2021-02-27",
-    //         "formMulta": 2,
-    //         "formJuros": 3,
-    //         "formHonorarios": 3,
-    //         "formMultaSobContrato": 2,
-    //         "formIndice": "Encargos Contratuais %",
-    //         "formIndiceEncargos": 1
-    //     },
-    //     "infoLancamento": {
-    // "dataVencimento":"2017-07-10",
-    // "saldoDevedor": 10000.00,
-    // "tipoLancamento":1,
-    // "dataBaseAtual": "2017-07-10",
-    // "valorLancamento":20.00
-    //     }
-    // }
-
 
     public class ChequeEmpresarial
     {
@@ -76,6 +53,27 @@ namespace calculadora_api.Models
         public bool isEmpty()
         {
             return contractRef == null || contractRef.Equals("") || contractRef.Length == 0;
+        }
+
+
+        public ChequeEmpresarialDao parse() {
+            ChequeEmpresarialDao dao = new ChequeEmpresarialDao();
+            dao.id = this.id;
+            dao.dataBase = this.dataBase.ToString("yyyy-MM-dd");
+            dao.indiceDB = this.indiceDB;
+            dao.indiceDataBase = this.indiceDataBase;
+            dao.indiceBA = this.indiceBA;
+            dao.indiceDataBaseAtual = this.indiceDataBaseAtual;
+            dao.dataBaseAtual = this.dataBaseAtual.ToString("yyyy-MM-dd");
+            dao.valorDevedor = this.valorDevedor;
+            dao.encargosMonetarios = JsonSerializer.Serialize(this.encargosMonetarios);
+            dao.lancamentos = this.lancamentos;
+            dao.tipoLancamento = this.tipoLancamento;
+            dao.valorDevedorAtualizado = this.valorDevedorAtualizado;
+            dao.contractRef = this.contractRef;
+            dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");;
+            dao.infoParaCalculo = JsonSerializer.Serialize(this.infoParaCalculo);
+            return dao;
         }
 
 

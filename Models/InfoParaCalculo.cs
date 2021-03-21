@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
@@ -34,12 +35,13 @@ namespace calculadora_api.Models
         public static InfoParaCalculo parse(JToken infoParaCaluloJson)
         {
             InfoParaCalculo info = new InfoParaCalculo();
-            // if (infoParaCaluloJson.SelectToken("formUltimaAtualizacao") == null) {
-            //     info.formUltimaAtualizacao = new DateTime();
-            //     infoParaCaluloJson = JToken.FromObject(info);
-            // }
             info = infoParaCaluloJson.ToObject<InfoParaCalculo>();
             return info;
+        }
+
+
+        public static InfoParaCalculo parse(string jsonString) {
+            return JsonSerializer.Deserialize<InfoParaCalculo>(jsonString);
         }
 
 

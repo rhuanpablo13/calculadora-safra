@@ -12,6 +12,7 @@ using calculadora_api.Services;
 
 using System.Security;
 using System.Security.Principal;
+using calculadora_api.Dao;
 
 namespace calculadora_api.Controllers
 {
@@ -23,7 +24,7 @@ namespace calculadora_api.Controllers
 
         private readonly IndiceController indiceController;
 
-        private readonly JSON jc = new JSON();
+        private readonly U jc = new U();
 
         public ChequeEmpresarialController(ApplicationContext context)
         {
@@ -37,9 +38,14 @@ namespace calculadora_api.Controllers
         [HttpGet("pesquisar")]
         public ActionResult<IEnumerable<ChequeEmpresarial>> GetChequeEmpresarialItems([FromQuery] string contractRef)
         {
-            List<ChequeEmpresarial> cheques = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
-            if (cheques.Count > 0)
+            List<ChequeEmpresarialDao> chequesDao = _context.ChequeEmpresarialItems.Where(a => a.contractRef == contractRef).ToList();
+            if (chequesDao.Count > 0)
             {
+                List<ChequeEmpresarial> cheques = new List<ChequeEmpresarial>();
+                foreach (ChequeEmpresarialDao item in chequesDao)
+                {
+                    cheques.Add(item.parseFrom());
+                } 
                 return cheques;
                 //return calcular(cheques);
             }
@@ -58,17 +64,16 @@ namespace calculadora_api.Controllers
                 return NotFound();
             }
 
-            return chequeempresarialItem;
+            return chequeempresarialItem.parseFrom();
         }
 
 
         [HttpPost]
         public ActionResult PostChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
         {
-            Console.WriteLine("---------------------------------------------------");
             foreach (var chequeEmpresarial in chequeEmpresarialList)
             {
-                _context.ChequeEmpresarialItems.Add(chequeEmpresarial);
+                _context.ChequeEmpresarialItems.Add(chequeEmpresarial.parse());
                 _context.SaveChanges();
             }
             return NoContent();
@@ -78,11 +83,10 @@ namespace calculadora_api.Controllers
         [HttpPut]
         public ActionResult PutChequeEmpresarialItem([FromBody] List<ChequeEmpresarial> chequeEmpresarialList)
         {
-            foreach (var chequeEmpresarial in chequeEmpresarialList)
+            foreach (ChequeEmpresarial chequeEmpresarial in chequeEmpresarialList)
             {
-                Console.WriteLine(chequeEmpresarial);
-
-                _context.Entry(chequeEmpresarial).State = EntityState.Modified;
+                ChequeEmpresarialDao dao = chequeEmpresarial.parse();
+                _context.Entry(dao).State = EntityState.Modified;
                 _context.SaveChanges();
             }
 
@@ -93,7 +97,7 @@ namespace calculadora_api.Controllers
         [HttpDelete("{id}")]
         public ActionResult<ChequeEmpresarial> DeleteChequeEmpresarialItem(int id)
         {
-            var chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
+            ChequeEmpresarialDao chequeempresarialItem = _context.ChequeEmpresarialItems.Find(id);
 
             if (chequeempresarialItem == null)
             {
@@ -103,7 +107,7 @@ namespace calculadora_api.Controllers
             _context.ChequeEmpresarialItems.Remove(chequeempresarialItem);
             _context.SaveChanges();
 
-            return chequeempresarialItem;
+            return chequeempresarialItem.parseFrom();
         }
 
 
