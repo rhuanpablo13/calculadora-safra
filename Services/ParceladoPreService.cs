@@ -28,11 +28,14 @@ namespace calculadora_api.Services
 
         public List<ParceladoPre> calcular(string contractRef, List<Parcela> parcelas)
         {
-            ParceladoPre parcelado = new ParceladoPre();
+            ParceladoPre parcelado;
             List<ParceladoPre> ls = new List<ParceladoPre>();
             foreach (var parcela in parcelas)
             {
+                parcelado = new ParceladoPre();
                 parcelado.carregarDadosEntrada(contractRef, infoParaCalculo, parcela);
+                Console.WriteLine(parcelado.ToString());
+
                 parcelado = calcular(parcelado);
                 ls.Add(parcelado);
             }
@@ -64,7 +67,7 @@ namespace calculadora_api.Services
             p.encargosMonetarios.jurosAm.moneyValue = ((p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100);
             
             //multa
-            p.encargosMonetarios.multa = (p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + (this.infoParaCalculo.formMulta / 100));
+            p.encargosMonetarios.multa = (p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100);
             //subtotal
             p.subtotal = p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa;
             //valorPMTVincenda

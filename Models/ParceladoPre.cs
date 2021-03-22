@@ -51,8 +51,7 @@ namespace calculadora_api.Models
             this.parcela = parcela;
             this.indiceDCA = infoParaCalculo.formIndice;
             this.indiceDV = infoParaCalculo.formIndice;
-
-            this.dataCalcAmor = parcela.dataVencimento; //revisar
+            this.dataCalcAmor = infoParaCalculo.formDataCalculo;
         }
 
 
