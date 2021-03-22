@@ -55,11 +55,15 @@ namespace calculadora_api.Dao
             p.parcela.status = this.status;
             p.ultimaAtualizacao = U.toDateTime(this.ultimaAtualizacao);
             p.encargosMonetarios = EncargosMonetarios.parse(this.encargosMonetarios);
-            p.infoParaCalculo = InfoParaCalculo.parse(this.infoParaCalculo);
             p.tipoParcela = this.tipoParcela;
             p.infoParaAmortizacao = this.infoParaAmortizacao;
             p.vincenda = this.vincenda;
             return p;
+        }
+
+
+        public InfoParaCalculo GetInfoParaCalculo() {
+            return InfoParaCalculo.parse(this.infoParaCalculo);
         }
     }
 

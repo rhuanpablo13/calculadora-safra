@@ -30,7 +30,7 @@ namespace calculadora_api.Models
         public string contractRef { get; set; }
         
         public DateTime ultimaAtualizacao { get; set; }
-        public InfoParaCalculo infoParaCalculo = new InfoParaCalculo();
+        //public InfoParaCalculo infoParaCalculo = new InfoParaCalculo();
         public string tipoParcela { get; set; }
         public string infoParaAmortizacao { get; set; }
         public Boolean vincenda { set; get; }
@@ -47,7 +47,7 @@ namespace calculadora_api.Models
         public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
         {
             this.contractRef = contractRef;
-            this.infoParaCalculo = infoParaCalculo;
+            // this.infoParaCalculo = infoParaCalculo;
             this.parcela = parcela;
             this.indiceDCA = infoParaCalculo.formIndice;
             this.indiceDV = infoParaCalculo.formIndice;
@@ -56,7 +56,7 @@ namespace calculadora_api.Models
         }
 
 
-        public ParceladoPreDao parse() {
+        public ParceladoPreDao parseToDao(InfoParaCalculo infoParaCalculo) {
             ParceladoPreDao dao = new ParceladoPreDao();
             dao.Id = this.Id;
             dao.nparcelas = this.parcela.nparcelas.ToString();
@@ -72,7 +72,7 @@ namespace calculadora_api.Models
             dao.totalDevedor = this.totalDevedor;
             dao.contractRef = this.contractRef;
             dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");
-            dao.infoParaCalculo = JsonSerializer.Serialize(this.infoParaCalculo);
+            dao.infoParaCalculo = JsonSerializer.Serialize(infoParaCalculo);
             dao.tipoParcela = this.tipoParcela;
             dao.infoParaAmortizacao = this.infoParaAmortizacao;
             dao.vincenda = this.vincenda;
@@ -97,7 +97,7 @@ namespace calculadora_api.Models
                 + "\n\t totalDevedor -> " + totalDevedor 
                 + "\n\t contractRef -> " + contractRef 
                 + "\n\t ultimaAtualizacao -> " + ultimaAtualizacao 
-                + "\n\t infoParaCalculo -> " + infoParaCalculo 
+                // + "\n\t infoParaCalculo -> " + infoParaCalculo 
                 + "\n\t tipoParcela -> " + tipoParcela 
                 + "\n\t infoParaAmortizacao -> " + infoParaAmortizacao 
                 + "\n\t vincenda -> " + vincenda + "\n]"
