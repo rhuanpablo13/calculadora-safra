@@ -17,13 +17,16 @@ namespace calculadora_api.Services
 
         private readonly IndiceController indiceController;
 
-        public ParceladoPreService(IndiceController indiceController)
+        private InfoParaCalculo infoParaCalculo;
+
+        public ParceladoPreService(IndiceController indiceController, InfoParaCalculo infoParaCalculo)
         {
             this.indiceController = indiceController;
+            this.infoParaCalculo = infoParaCalculo;
         }
 
 
-        public List<ParceladoPre> calcular(string contractRef, InfoParaCalculo infoParaCalculo, List<Parcela> parcelas)
+        public List<ParceladoPre> calcular(string contractRef, List<Parcela> parcelas)
         {
             ParceladoPre parcelado = new ParceladoPre();
             List<ParceladoPre> ls = new List<ParceladoPre>();
@@ -38,34 +41,17 @@ namespace calculadora_api.Services
 
 
 
-        // public Tabela calcular(DadosParceladoPre dadosLancamento, Tabela table)
-        // {
-        //     // ParceladoPre novoRegistro = new ParceladoPre();
-        //     // novoRegistro.copyFromDadosLancamento(dadosLancamento);
-        //     // novoRegistro.dataBase = registroSuperior.dataBaseAtual;
-        //     // novoRegistro.encargosMonetarios.multa = -1; // multa só é calculada na primeira linha
-        //     // novoRegistro.valorDevedor = registroSuperior.valorDevedorAtualizado;
-        //     // novoRegistro.indiceBA = dadosLancamento.formIndice == null ? registroSuperior.indiceBA : dadosLancamento.formIndice;
-        //     // novoRegistro.indiceDB = novoRegistro.indiceBA;
-        //     // table.adicionarRegistro(calcular(novoRegistro));
-        //     return table;
-        // }
-
-
-
         private ParceladoPre calcular(ParceladoPre p)
         {
-            InfoParaCalculo ipc = p.infoParaCalculo;
-            
             //dias
             p.encargosMonetarios.jurosAm.dias = UService.numberOfDays(p.dataCalcAmor, p.parcela.dataVencimento);
             //indiceDataVencimento
             p.indiceDataVencimento = UService.getIndice(
-                p.indiceDV, p.parcela.dataVencimento, ipc.formIndiceEncargos, indiceController
+                p.indiceDV, p.parcela.dataVencimento, this.infoParaCalculo.formIndiceEncargos, indiceController
             );
             //indiceDataCalcAmor
             p.indiceDataCalcAmor = UService.getIndice(
-                p.indiceDCA, p.dataCalcAmor, ipc.formIndiceEncargos, indiceController
+                p.indiceDCA, p.dataCalcAmor, this.infoParaCalculo.formIndiceEncargos, indiceController
             );
 
             //correcaoPeloIndice
@@ -73,16 +59,16 @@ namespace calculadora_api.Services
                 (p.parcela.valorNoVencimento / p.indiceDataVencimento) * p.indiceDataCalcAmor
             ) - p.parcela.valorNoVencimento;
             //percentsJuros
-            p.encargosMonetarios.jurosAm.percentsJuros = (p.infoParaCalculo.formJuros / 30) * p.encargosMonetarios.jurosAm.dias;
+            p.encargosMonetarios.jurosAm.percentsJuros = (this.infoParaCalculo.formJuros / 30) * p.encargosMonetarios.jurosAm.dias;
             //moneyValue
-            p.encargosMonetarios.jurosAm.moneyValue = ((p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (p.infoParaCalculo.formJuros / 100);
+            p.encargosMonetarios.jurosAm.moneyValue = ((p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100);
             
             //multa
-            p.encargosMonetarios.multa = (p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + (p.infoParaCalculo.formMulta / 100));
+            p.encargosMonetarios.multa = (p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + (this.infoParaCalculo.formMulta / 100));
             //subtotal
             p.subtotal = p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa;
             //valorPMTVincenda
-            p.valorPMTVincenda = p.parcela.valorNoVencimento * p.infoParaCalculo.desagio;
+            p.valorPMTVincenda = p.parcela.valorNoVencimento * this.infoParaCalculo.desagio;
             
             p.amortizacao = -1;
 
@@ -90,8 +76,6 @@ namespace calculadora_api.Services
             p.totalDevedor = p.vincenda 
             ? p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa + p.amortizacao 
             : p.valorPMTVincenda;
-
-            p.infoParaCalculo = ipc;
 
             // if (p.vincenda) {
             //     totalParcelasVencidas = [
@@ -137,9 +121,9 @@ namespace calculadora_api.Services
             // subtotal = cb.valorDevedorAtualizado;
 
             // honorarios = valorDevedorAtualizado 
-            honorarios = subtotal * (cb.infoParaCalculo.formHonorarios / 100);
+            honorarios = subtotal * (this.infoParaCalculo.formHonorarios / 100);
             // multa = ((valorDevedorAtualizado + honorarios) * multa_sob_contrato grupo 2 / 100
-            multa = (subtotal + honorarios) * (cb.infoParaCalculo.formMultaSobContrato / 100);
+            multa = (subtotal + honorarios) * (this.infoParaCalculo.formMultaSobContrato / 100);
             // total_grandtotal = tmulta_sob_contrato + honorarios + valorDevedorAtualizado;
             total = honorarios + subtotal + multa;
 
