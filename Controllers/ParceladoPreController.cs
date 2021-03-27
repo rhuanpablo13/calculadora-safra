@@ -9,6 +9,7 @@ using calculadora_api.Services;
 using System;
 using Newtonsoft.Json;
 using calculadora_api.Dao;
+using Converter;
 
 namespace calculadora_api.Controllers
 {
@@ -27,12 +28,12 @@ namespace calculadora_api.Controllers
         }
 
         [HttpGet("pesquisar")]
-        public ActionResult<IEnumerable<ParceladoPre>> GetParceladoPreItems([FromQuery] string contractRef)
+        public ActionResult<IEnumerable<Parcelado>> GetParceladoPreItems([FromQuery] string contractRef)
         {
             List<ParceladoPreDao> parceladosPre = _context.ParceladoPreItems.Where(a => a.contractRef == contractRef).ToList();
             if (parceladosPre.Count > 0)
             {
-                List<ParceladoPre> parcelados = new List<ParceladoPre>();
+                List<Parcelado> parcelados = new List<Parcelado>();
                 foreach (ParceladoPreDao item in parceladosPre)
                 {
                     parcelados.Add(item.parseFrom());
@@ -45,7 +46,7 @@ namespace calculadora_api.Controllers
 
         //GET:      api/users/n
         [HttpGet("{id}")]
-        public ActionResult<ParceladoPre> ParceladoPreItem(int id)
+        public ActionResult<Parcelado> ParceladoPreItem(int id)
         {
             ParceladoPreDao parceladoPreItem = _context.ParceladoPreItems.Find(id);
 
@@ -84,7 +85,7 @@ namespace calculadora_api.Controllers
 
         //DELETE:   api/users/n
         [HttpDelete("{id}")]
-        public ActionResult<ParceladoPre> DeleteParceladoPreItem(int id)
+        public ActionResult<Parcelado> DeleteParceladoPreItem(int id)
         {
             ParceladoPreDao parceladoPreItem = _context.ParceladoPreItems.Find(id);
 
@@ -108,24 +109,18 @@ namespace calculadora_api.Controllers
             InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(dados.SelectToken("infoParaCalculo"));
             List<Parcela> parcelas = Parcela.parse(dados.SelectToken("tableParcelas"));
             ParceladoPreService parceladoPreService = new ParceladoPreService(indiceController, infoParaCalculo);
-            Tabela<ParceladoPre> table = new Tabela<ParceladoPre>();
 
-            List<ParceladoPre> rgs = parceladoPreService.calcular(contractRef, parcelas);
-
-            foreach (ParceladoPre item in rgs)
-            {
-                table.adicionarRegistro(item);
-            }
+            TabelaParcelados table = parceladoPreService.calcular(contractRef, parcelas);
             Totais totais = parceladoPreService.calcularTotais(table);
-            Retorno<ParceladoPre> retorno = new Retorno<ParceladoPre>(contractRef, table, infoParaCalculo, totais);
+
+            RetornoParcelado retorno = new RetornoParcelado(contractRef, table, infoParaCalculo, totais);
             return tratarRetorno(retorno);
         }
 
 
-        private ActionResult<JObject> tratarRetorno(Retorno<ParceladoPre> retorno) {
-            JObject obj = JObject.Parse(JsonConvert.SerializeObject(retorno));
-
+        private JObject tratarRetorno(Retorno<Parcelado> retorno) {
             // retirar os objetos "parcela"
+            JObject obj = JObject.Parse(JsonConvert.SerializeObject(retorno));
             obj.Descendants().OfType<JProperty>().Where(attr => attr.Name.Equals("parcela")).ToList().ForEach(attr => attr.Remove());
             return obj;
         }

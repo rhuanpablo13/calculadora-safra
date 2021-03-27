@@ -26,25 +26,37 @@ namespace calculadora_api.Services
         }
 
 
-        public List<ParceladoPre> calcular(string contractRef, List<Parcela> parcelas)
+        public TabelaParcelados calcular(string contractRef, List<Parcela> parcelas)
         {
-            ParceladoPre parcelado;
-            List<ParceladoPre> ls = new List<ParceladoPre>();
+            Parcelado parcelado;
+            TabelaParcelados table = new TabelaParcelados();
             foreach (var parcela in parcelas)
             {
-                parcelado = new ParceladoPre();
+                parcelado = new Parcelado();
                 parcelado.carregarDadosEntrada(contractRef, infoParaCalculo, parcela);
-                Console.WriteLine(parcelado.ToString());
-
                 parcelado = calcular(parcelado);
-                ls.Add(parcelado);
+                table.adicionarRegistro(parcelado);
+
+                if (parcelado.vincenda) {
+                    table.totalParcelasVincendas.valorPMTVincenda += parcelado.valorPMTVincenda;
+                    table.totalParcelasVincendas.totalDevedor += parcelado.totalDevedor;
+                } else {
+                    table.totalParcelasVencidas.valorNoVencimento += parcelado.parcela.valorNoVencimento;
+                    table.totalParcelasVencidas.correcaoPeloIndice += parcelado.encargosMonetarios.correcaoPeloIndice;
+                    table.totalParcelasVencidas.money += parcelado.encargosMonetarios.jurosAm.moneyValue;
+                    table.totalParcelasVencidas.somaMulta += parcelado.encargosMonetarios.multa;
+                    table.totalParcelasVencidas.subTotal += parcelado.subtotal;
+                    table.totalParcelasVencidas.amortizacao += parcelado.amortizacao;
+                    table.totalParcelasVencidas.totalDevedor += parcelado.totalDevedor;
+                }
             }
-            return ls;
+            return table;
         }
 
 
+        
 
-        private ParceladoPre calcular(ParceladoPre p)
+        private Parcelado calcular(Parcelado p)
         {
             //dias
             p.encargosMonetarios.jurosAm.dias = UService.numberOfDays(p.dataCalcAmor, p.parcela.dataVencimento);
@@ -107,9 +119,10 @@ namespace calculadora_api.Services
         }
 
 
-        public Totais calcularTotais(Tabela<ParceladoPre> table)
-        {
+        
 
+        public Totais calcularTotais(Tabela<Parcelado> table)
+        {
             float subtotal = 0;
             float honorarios = 0;
             float multa = 0;
@@ -120,7 +133,7 @@ namespace calculadora_api.Services
                 return null;
             }
 
-            ParceladoPre cb = table.getUltimoRegistro();
+            Parcelado cb = table.getUltimoRegistro();
             // subtotal = cb.valorDevedorAtualizado;
 
             // honorarios = valorDevedorAtualizado 

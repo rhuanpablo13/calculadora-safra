@@ -11,7 +11,7 @@ namespace calculadora_api.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
     [Migration("20200715095521_ParceladoPre")]
-    partial class ParceladoPre
+    partial class Parcelado
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -138,7 +138,7 @@ namespace calculadora_api.Migrations
                     b.ToTable("LogItems");
                 });
 
-            modelBuilder.Entity("calculadora_api.Models.ParceladoPre", b =>
+            modelBuilder.Entity("calculadora_api.Models.Parcelado", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

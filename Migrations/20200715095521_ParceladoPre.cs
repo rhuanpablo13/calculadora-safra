@@ -2,7 +2,7 @@
 
 namespace calculadora_api.Migrations
 {
-    public partial class ParceladoPre : Migration
+    public partial class Parcelado : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
