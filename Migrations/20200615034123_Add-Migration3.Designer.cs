@@ -132,7 +132,7 @@ namespace calculadora_api.Migrations
                     b.ToTable("LogItems");
                 });
 
-            modelBuilder.Entity("calculadora_api.Models.ParceladoPre", b =>
+            modelBuilder.Entity("calculadora_api.Models.Parcelado", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

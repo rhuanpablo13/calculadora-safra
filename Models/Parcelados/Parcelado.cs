@@ -9,7 +9,7 @@ namespace calculadora_api.Models
 
 {
 
-    public class ParceladoPre
+    public class Parcelado
     {
         [Key]
         public int Id { get; set; }
@@ -36,13 +36,13 @@ namespace calculadora_api.Models
         public Boolean vincenda { set; get; }
         private dynamic dynamic { get; set; }
 
-        public ParceladoPre(JObject dados)
+        public Parcelado(JObject dados)
         {
             Object tmp = dados.ToObject<Object>();
             dynamic = Newtonsoft.Json.JsonConvert.DeserializeObject(dados.ToString());
         }
 
-        public ParceladoPre() { }
+        public Parcelado() { }
 
         public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
         {
@@ -81,7 +81,7 @@ namespace calculadora_api.Models
 
         public override string ToString()
         {
-            return " ParceladoPre: ["
+            return " Parcelado: ["
                 + "\n\t Id -> " + Id 
                 + "\n\t parcela -> " + parcela 
                 + "\n\t indiceDV -> " + indiceDV 

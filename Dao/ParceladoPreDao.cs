@@ -35,8 +35,8 @@ namespace calculadora_api.Dao
 
 
 
-        public ParceladoPre parseFrom() {
-            ParceladoPre p = new ParceladoPre();
+        public Parcelado parseFrom() {
+            Parcelado p = new Parcelado();
             p.Id = this.Id;
             p.parcela.nparcelas = Convert.ToInt32(this.nparcelas);
             p.parcela.parcelaInicial = this.parcelaInicial;
