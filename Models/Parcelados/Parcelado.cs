@@ -27,12 +27,10 @@ namespace calculadora_api.Models
         public float valorPMTVincenda { get; set; }
         public float amortizacao { get; set; }
         public float totalDevedor { get; set; }
-        public string contractRef { get; set; }
-        
+        public string contractRef { get; set; }        
         public DateTime ultimaAtualizacao { get; set; }
-        //public InfoParaCalculo infoParaCalculo = new InfoParaCalculo();
         public string tipoParcela { get; set; }
-        public string infoParaAmortizacao { get; set; }
+        public InfoParaAmortizacao infoParaAmortizacao { get; set; }
         public Boolean vincenda { set; get; }
         private dynamic dynamic { get; set; }
 
@@ -47,7 +45,6 @@ namespace calculadora_api.Models
         public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
         {
             this.contractRef = contractRef;
-            // this.infoParaCalculo = infoParaCalculo;
             this.parcela = parcela;
             this.indiceDCA = infoParaCalculo.formIndice;
             this.indiceDV = infoParaCalculo.formIndice;
@@ -73,7 +70,7 @@ namespace calculadora_api.Models
             dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");
             dao.infoParaCalculo = JsonSerializer.Serialize(infoParaCalculo);
             dao.tipoParcela = this.tipoParcela;
-            dao.infoParaAmortizacao = this.infoParaAmortizacao;
+            dao.infoParaAmortizacao = JsonSerializer.Serialize(this.infoParaAmortizacao);
             dao.vincenda = this.vincenda;
             return dao;
         }

@@ -1,4 +1,5 @@
 using Converter;
+using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
 {
@@ -11,6 +12,12 @@ namespace calculadora_api.Models
         {
         }
 
+        public static TotalParcelasVincendas parse(JToken infoParcelaJson)
+        {
+            TotalParcelasVincendas info = infoParcelaJson.ToObject<TotalParcelasVincendas>();
+            return info;
+        }
+        
         public string toJson() {
             return U.toStringJson(this);
         }

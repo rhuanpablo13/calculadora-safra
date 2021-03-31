@@ -14,10 +14,12 @@ namespace calculadora_api.Models
         public string contractRef { get; set; }
         public InfoParaCalculo infoParaCalculo { get; set; }
         public List<T> tabela { get; set; }
-        public Totais rodape { get; set; }
+        public Rodape rodape { get; set; }
 
 
-        public Retorno(string contractRef, Tabela<T> tabela, InfoParaCalculo infoParaCalculo, Totais rodape)
+        public Retorno() {}
+        
+        public Retorno(string contractRef, Tabela<T> tabela, InfoParaCalculo infoParaCalculo, Rodape rodape)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = infoParaCalculo;
@@ -25,7 +27,7 @@ namespace calculadora_api.Models
             this.rodape = rodape;
         }
 
-        public Retorno(string contractRef, Tabela<T> tabela, Totais rodape)
+        public Retorno(string contractRef, Tabela<T> tabela, Rodape rodape)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = new InfoParaCalculo();
@@ -38,10 +40,21 @@ namespace calculadora_api.Models
             return "Retorno: ["
             + "\n\t contractRef -> " + contractRef
             + "\n\t infoParaCalculo -> " + infoParaCalculo.ToString()
-            + "\n\t tabela -> " + tabela.ToString()
+            + "\n\t tabela -> " + printTabela()
             + "\n\t rodape -> " + rodape.ToString()
             + "\n]\n\n"
             ;
+        }
+
+        protected string printTabela() {
+            if (tabela.Count == 0) return "[]";
+
+            string temp = "[\n\t";
+            foreach (var item in tabela)
+            {
+                temp += item.ToString() + "\n\t";
+            }
+            return temp += "]";
         }
     }
 }

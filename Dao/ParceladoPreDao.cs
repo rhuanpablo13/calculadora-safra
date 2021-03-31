@@ -56,7 +56,7 @@ namespace calculadora_api.Dao
             p.ultimaAtualizacao = U.toDateTime(this.ultimaAtualizacao);
             p.encargosMonetarios = EncargosMonetarios.parse(this.encargosMonetarios);
             p.tipoParcela = this.tipoParcela;
-            p.infoParaAmortizacao = this.infoParaAmortizacao;
+            p.infoParaAmortizacao = InfoParaAmortizacao.parse(this.infoParaAmortizacao);
             p.vincenda = this.vincenda;
             return p;
         }

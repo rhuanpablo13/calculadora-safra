@@ -88,43 +88,23 @@ namespace calculadora_api.Services
             p.amortizacao = -1;
 
             //totalDevedor
-            p.totalDevedor = p.vincenda 
+            p.totalDevedor = !p.vincenda 
             ? p.parcela.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa + p.amortizacao 
             : p.valorPMTVincenda;
-
-            // if (p.vincenda) {
-            //     totalParcelasVencidas = [
-            //         valorNoVencimento += p.valorNoVencimento,
-            //         correcaoPeloIndice += p.correcaoPeloIndice,
-            //         money += money,
-            //         multa += multa,
-            //         subTotal += subTotal,
-            //         amortizacao += amortizacao,
-            //         totalDevedor += totalDevedor
-            //     ];
-            // }
-
-            // } else {
-            //     totalParcelasVincendas = [
-            //         valorPMTVincenda += valorPMTVincenda,
-            //         totalDevedor += totalDevedor
-            //     ];
-            // }
-
-
-            // Console.WriteLine("*********** dados calculados ***************");
-            // Console.WriteLine(p.ToString());
 
             return p;
         }
 
 
-        
+        public void calcularAmortizacao() {
+            Console.WriteLine("calculando amortização");
+        }
 
-        public Totais calcularTotais(Tabela<Parcelado> table)
+        public Rodape calcularTotais(TabelaParcelados table)
         {
             float subtotal = 0;
             float honorarios = 0;
+            float amortizacao = 0;
             float multa = 0;
             float total = 0;
 
@@ -133,8 +113,7 @@ namespace calculadora_api.Services
                 return null;
             }
 
-            Parcelado cb = table.getUltimoRegistro();
-            // subtotal = cb.valorDevedorAtualizado;
+            subtotal = table.totalParcelasVencidas.totalDevedor;
 
             // honorarios = valorDevedorAtualizado 
             honorarios = subtotal * (this.infoParaCalculo.formHonorarios / 100);
@@ -143,7 +122,7 @@ namespace calculadora_api.Services
             // total_grandtotal = tmulta_sob_contrato + honorarios + valorDevedorAtualizado;
             total = honorarios + subtotal + multa;
 
-            return new Totais(subtotal, honorarios, multa, total);
+            return new Rodape(subtotal, honorarios, multa, total, amortizacao);
         }
     }
 }

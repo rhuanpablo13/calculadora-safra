@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
@@ -16,6 +16,18 @@ namespace calculadora_api.Models
             this.totalParcelasVencidas = new TotalParcelasVencidas();
             this.totalParcelasVincendas = new TotalParcelasVincendas();
         }
+
+        public static TabelaParcelados parse(JToken tabelaParceladosJson)
+        {
+            TabelaParcelados tabela = new TabelaParcelados();
+            tabela.carregarRegistros(tabelaParceladosJson);
+            return tabela;
+        }
+
+        public static TabelaParcelados parse(string jsonString) {
+            return JsonSerializer.Deserialize<TabelaParcelados>(jsonString);
+        }
+
 
     }
 

@@ -1,5 +1,8 @@
 using System;
 using System.Globalization;
+using System.Text.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace calculadora_api.Models
 
@@ -7,41 +10,43 @@ namespace calculadora_api.Models
     public class Totais
     {
 
+        public TotalParcelasVincendas totalParcelasVincendas {get; set;}
+        public TotalParcelasVencidas totalParcelasVencidas {get; set;}
+
+
         public Totais()
         {
         }
 
-        public Totais(float subtotal, float honorario, float multa, float total)
+        public Totais(TotalParcelasVincendas totalParcelasVincendas, TotalParcelasVencidas totalParcelasVencidas)
         {
-            this.subtotal = formatReal(subtotal);
-            this.honorario = formatReal(honorario);
-            this.multa = formatReal(multa);
-            this.total = formatReal(total);
+            this.totalParcelasVincendas = totalParcelasVincendas;
+            this.totalParcelasVencidas = totalParcelasVencidas;
         }
 
         protected string formatReal(float value)
         {
-            return string.Format(CultureInfo.GetCultureInfo("pt-BR"), "US$ {0:#,###.##}", value);
+            return string.Format(CultureInfo.GetCultureInfo("pt-BR"), "R$ {0:#,###.##}", value);
         }
 
-        public string subtotal { get; set; }
-        public string honorario { get; set; }
-        public string multa { get; set; }
-        public string total { get; set; }
 
-        public void setSubtotal(float subtotal) => this.subtotal = this.formatReal(subtotal);
-        public void setHonorario(float honorario) => this.honorario = this.formatReal(honorario);
-        public void setMulta(float multa) => this.multa = this.formatReal(multa);
-        public void setTotal(float total) => this.total = this.formatReal(total);
+        public static Totais parse(string jsonString) {
+            return JsonSerializer.Deserialize<Totais>(jsonString);
+        }
+
+        public static Totais parse(JToken vincendas, JToken vencidas) {
+            Totais totais = new Totais();
+            totais.totalParcelasVencidas = TotalParcelasVencidas.parse(vencidas);
+            totais.totalParcelasVincendas = TotalParcelasVincendas.parse(vincendas);
+            return totais;
+        }
 
 
         public override string ToString()
         {
             return "Totais: ["
-            + "\n\t subtotal -> " + subtotal
-            + "\n\t honorario -> " + honorario
-            + "\n\t multa -> " + multa
-            + "\n\t total -> " + total
+            + "\n\t vincendas -> " + totalParcelasVincendas
+            + "\n\t vencidas -> " + totalParcelasVencidas
             + "\n]\n\n"
             ;
         }

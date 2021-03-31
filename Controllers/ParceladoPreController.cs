@@ -111,7 +111,7 @@ namespace calculadora_api.Controllers
             ParceladoPreService parceladoPreService = new ParceladoPreService(indiceController, infoParaCalculo);
 
             TabelaParcelados table = parceladoPreService.calcular(contractRef, parcelas);
-            Totais totais = parceladoPreService.calcularTotais(table);
+            Rodape totais = parceladoPreService.calcularTotais(table);
 
             RetornoParcelado retorno = new RetornoParcelado(contractRef, table, infoParaCalculo, totais);
             return tratarRetorno(retorno);
@@ -125,5 +125,29 @@ namespace calculadora_api.Controllers
             return obj;
         }
 
+
+        [Route("incluir-amortizacao")]
+        [HttpPost]
+        public ActionResult<JObject> incluirAmortizacao([FromBody] JObject dados)
+        {
+
+            RetornoParcelado retornoParcelado = RetornoParcelado.parse(
+                dados.SelectToken("totais"),
+                dados.SelectToken("infoParaCalculo"),
+                dados.SelectToken("tabela"),
+                dados.SelectToken("rodape"),
+                dados.SelectToken("contractRef")
+            );
+            
+            
+            Console.WriteLine(retornoParcelado.ToString());
+
+            // Rodape totais = Rodape.parse(dados.SelectToken("rodape"));
+            
+            // Console.WriteLine(table);
+            // Console.WriteLine(totais);
+
+            return Ok();
+        }
     }
 }
