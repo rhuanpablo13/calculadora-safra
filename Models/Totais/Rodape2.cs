@@ -6,14 +6,14 @@ using Newtonsoft.Json.Linq;
 namespace calculadora_api.Models
 
 {
-    public class Rodape
+    public class Rodape2
     {
 
-        public Rodape()
+        public Rodape2()
         {
         }
 
-        public Rodape(float subtotal, float honorario, float multa, float total)
+        public Rodape2(float subtotal, float honorario, float multa, float total)
         {
             this.subtotal = formatReal(subtotal);
             this.honorario = formatReal(honorario);
@@ -21,7 +21,7 @@ namespace calculadora_api.Models
             this.total = formatReal(total);
         }
 
-        public Rodape(float subtotal, float honorario, float multa, float total, float amortizacao)
+        public Rodape2(float subtotal, float honorario, float multa, float total, float amortizacao)
         {
             this.subtotal = formatReal(subtotal);
             this.honorario = formatReal(honorario);
@@ -47,21 +47,21 @@ namespace calculadora_api.Models
         public void setTotal(float total) => this.total = this.formatReal(total);
 
 
-        public static Rodape parse(JToken totais) {
+        public static Rodape2 parse(JToken totais) {
             // infoParaAmortizacao.Descendants().OfType<JProperty>().Where(attr => attr.Name.Equals("parcela")).ToList().ForEach(attr => attr.Remove());
             totais.ToString().Replace("US$ ", "");
-            Rodape info = totais.ToObject<Rodape>();
+            Rodape2 info = totais.ToObject<Rodape2>();
             return info;
         }
 
 
-        public static Rodape parse(string jsonString) {
-            return JsonSerializer.Deserialize<Rodape>(jsonString);
+        public static Rodape2 parse(string jsonString) {
+            return JsonSerializer.Deserialize<Rodape2>(jsonString);
         }
 
         public override string ToString()
         {
-            return "Rodape: ["
+            return "Rodape2: ["
             + "\n\t subtotal -> " + subtotal
             + "\n\t amortizacao -> " + amortizacao
             + "\n\t honorario -> " + honorario

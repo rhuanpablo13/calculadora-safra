@@ -5,10 +5,10 @@ using Newtonsoft.Json.Linq;
 
 public class InfoParaAmortizacao {
 
-    public DateTime dataVencimento {get; set;}
-    public float saldoDevedor {get; set;}
+    public DateTime data_vencimento {get; set;}
+    public float saldo_devedor {get; set;}
     public string tipo {get; set;}
-    public bool wasUsed {get; set;}
+    public float residual {get; set;} = 0;
 
 
     public InfoParaAmortizacao() {}
@@ -16,24 +16,25 @@ public class InfoParaAmortizacao {
 
 
     public static List<InfoParaAmortizacao> parse(JToken infoParaAmortizacao) {
+        if (infoParaAmortizacao == null) return new List<InfoParaAmortizacao>();
         List<InfoParaAmortizacao> info = infoParaAmortizacao.ToObject<List<InfoParaAmortizacao>>();
         return info;
     }
 
 
-    public static InfoParaAmortizacao parse(string jsonString) {
-        return JsonSerializer.Deserialize<InfoParaAmortizacao>(jsonString);
+    public static List<InfoParaAmortizacao> parse(string jsonString) {
+        return JsonSerializer.Deserialize<List<InfoParaAmortizacao>>(jsonString);
     }
 
 
     public override string ToString()
     {
         return " InfoParaAmortizacao: ["
-        + "\n\t dataVencimento -> " + dataVencimento
-        + "\n\t saldoDevedor -> " + saldoDevedor
-        + "\n\t tipo -> " + tipo
-        + "\n\t wasUsed -> " + wasUsed
-        + "\n\t ]"
+        + "\n\t\t data_vencimento -> " + data_vencimento
+        + "\n\t\t saldo_devedor -> " + saldo_devedor
+        + "\n\t\t tipo -> " + tipo
+        + "\n\t\t residual -> " + residual
+        + "\n\t ]\n"
         ;
     }
 

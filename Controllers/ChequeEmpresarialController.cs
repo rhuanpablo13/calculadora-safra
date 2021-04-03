@@ -138,7 +138,7 @@ namespace calculadora_api.Controllers
             if (!novoCheque.isEmpty())
             {
                 table.adicionarRegistro(novoCheque);
-                Rodape totais = lancamentosService.calcularTotais(table);
+                TotaisRodape totais = lancamentosService.calcularTotais(table);
                 Retorno<ChequeEmpresarial> retorno = new Retorno<ChequeEmpresarial>(contractRef, table, totais);
                 return JObject.Parse(JsonConvert.SerializeObject(retorno));
             }

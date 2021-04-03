@@ -13,7 +13,11 @@ namespace calculadora_api.Models
     {
         [Key]
         public int Id { get; set; }
-        public Parcela parcela = new Parcela(); 
+        public int nparcelas { get; set; }
+        public float parcelaInicial { get; set; }
+        public DateTime dataVencimento { get; set; }
+        public float valorNoVencimento { get; set; }
+        public string status { get; set; }
         public string indiceDV { get; set; }
         public float indiceDataVencimento { get; set; }
         public string indiceDCA { get; set; }
@@ -30,7 +34,7 @@ namespace calculadora_api.Models
         public string contractRef { get; set; }        
         public DateTime ultimaAtualizacao { get; set; }
         public string tipoParcela { get; set; }
-        public InfoParaAmortizacao infoParaAmortizacao { get; set; }
+        // public InfoParaAmortizacao infoParaAmortizacao { get; set; }
         public Boolean vincenda { set; get; }
         private dynamic dynamic { get; set; }
 
@@ -45,7 +49,12 @@ namespace calculadora_api.Models
         public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
         {
             this.contractRef = contractRef;
-            this.parcela = parcela;
+            this.nparcelas = parcela.nparcelas;
+            this.dataVencimento = parcela.dataVencimento;
+            this.parcelaInicial = parcela.parcelaInicial;
+            this.valorNoVencimento = parcela.valorNoVencimento;
+            this.status = parcela.status;
+
             this.indiceDCA = infoParaCalculo.formIndice;
             this.indiceDV = infoParaCalculo.formIndice;
             this.dataCalcAmor = infoParaCalculo.formDataCalculo;
@@ -55,7 +64,7 @@ namespace calculadora_api.Models
         public ParceladoPreDao parseToDao(InfoParaCalculo infoParaCalculo) {
             ParceladoPreDao dao = new ParceladoPreDao();
             dao.Id = this.Id;
-            dao.nparcelas = this.parcela.nparcelas.ToString();
+            dao.nparcelas = this.nparcelas.ToString();
             dao.indiceDV = this.indiceDV;
             dao.indiceDataVencimento = this.indiceDataVencimento;
             dao.indiceDCA = this.indiceDCA;
@@ -70,7 +79,7 @@ namespace calculadora_api.Models
             dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");
             dao.infoParaCalculo = JsonSerializer.Serialize(infoParaCalculo);
             dao.tipoParcela = this.tipoParcela;
-            dao.infoParaAmortizacao = JsonSerializer.Serialize(this.infoParaAmortizacao);
+            // dao.infoParaAmortizacao = JsonSerializer.Serialize(this.infoParaAmortizacao);
             dao.vincenda = this.vincenda;
             return dao;
         }
@@ -80,7 +89,11 @@ namespace calculadora_api.Models
         {
             return " Parcelado: ["
                 + "\n\t Id -> " + Id 
-                + "\n\t parcela -> " + parcela 
+                + "\n\t nparcelas -> " + nparcelas
+                + "\n\t parcelaInicial -> " + parcelaInicial
+                + "\n\t dataVencimento -> " + dataVencimento
+                + "\n\t valorNoVencimento -> " + valorNoVencimento
+                + "\n\t status -> " + status 
                 + "\n\t indiceDV -> " + indiceDV 
                 + "\n\t indiceDataVencimento -> " + indiceDataVencimento 
                 + "\n\t indiceDCA -> " + indiceDCA 
@@ -95,7 +108,7 @@ namespace calculadora_api.Models
                 + "\n\t ultimaAtualizacao -> " + ultimaAtualizacao 
                 // + "\n\t infoParaCalculo -> " + infoParaCalculo 
                 + "\n\t tipoParcela -> " + tipoParcela 
-                + "\n\t infoParaAmortizacao -> " + infoParaAmortizacao 
+                // + "\n\t infoParaAmortizacao -> " + infoParaAmortizacao 
                 + "\n\t vincenda -> " + vincenda + "\n]"
             ;
         }

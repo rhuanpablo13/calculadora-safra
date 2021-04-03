@@ -10,6 +10,7 @@ using System;
 using Newtonsoft.Json;
 using calculadora_api.Dao;
 using Converter;
+using System.Text.Json;
 
 namespace calculadora_api.Controllers
 {
@@ -111,9 +112,10 @@ namespace calculadora_api.Controllers
             ParceladoPreService parceladoPreService = new ParceladoPreService(indiceController, infoParaCalculo);
 
             TabelaParcelados table = parceladoPreService.calcular(contractRef, parcelas);
-            Rodape totais = parceladoPreService.calcularTotais(table);
+            TotaisParcelas totaisParcelas = parceladoPreService.calcularTotaisParcelas(table);
+            TotaisRodape totais = parceladoPreService.calcularTotaisRodape(totaisParcelas);
 
-            RetornoParcelado retorno = new RetornoParcelado(contractRef, table, infoParaCalculo, totais);
+            RetornoParcelado retorno = new RetornoParcelado(contractRef, table, infoParaCalculo, totais, totaisParcelas);
             return tratarRetorno(retorno);
         }
 
@@ -134,19 +136,18 @@ namespace calculadora_api.Controllers
             RetornoParcelado retornoParcelado = RetornoParcelado.parse(
                 dados.SelectToken("totais"),
                 dados.SelectToken("infoParaCalculo"),
+                dados.SelectToken("infoParaAmortizacao"),
                 dados.SelectToken("tabela"),
                 dados.SelectToken("rodape"),
                 dados.SelectToken("contractRef")
             );
             
-            
-            Console.WriteLine(retornoParcelado.ToString());
-
-            // Rodape totais = Rodape.parse(dados.SelectToken("rodape"));
-            
-            // Console.WriteLine(table);
-            // Console.WriteLine(totais);
-
+            ParceladoPreService service = new ParceladoPreService(indiceController, retornoParcelado.infoParaCalculo);
+            service.calcularAmortizacao(
+                retornoParcelado.infoParaAmortizacao,
+                retornoParcelado.rodape,
+                retornoParcelado.totais.totalParcelasVencidas
+            );
             return Ok();
         }
     }

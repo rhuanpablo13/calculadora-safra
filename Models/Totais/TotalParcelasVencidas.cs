@@ -33,14 +33,14 @@ namespace calculadora_api.Models
          public override string ToString()
         {
             return "TotalParcelasVencidas: ["
-            + "\n\t valorNoVencimento -> " + valorNoVencimento
-            + "\n\t correcaoPeloIndice -> " + correcaoPeloIndice
-            + "\n\t money -> " + money
-            + "\n\t somaMulta -> " + somaMulta
-            + "\n\t subTotal -> " + subTotal
-            + "\n\t amortizacao -> " + amortizacao
-            + "\n\t totalDevedor -> " + totalDevedor
-            + "\n]\n"
+            + "\n\t\t\t valorNoVencimento -> " + valorNoVencimento
+            + "\n\t\t\t correcaoPeloIndice -> " + correcaoPeloIndice
+            + "\n\t\t\t money -> " + money
+            + "\n\t\t\t somaMulta -> " + somaMulta
+            + "\n\t\t\t subTotal -> " + subTotal
+            + "\n\t\t\t amortizacao -> " + amortizacao
+            + "\n\t\t\t totalDevedor -> " + totalDevedor
+            + "\n\t\t]\n"
             ;
         }
 

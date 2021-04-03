@@ -58,7 +58,7 @@ namespace calculadora_api.Models
             + "\n\t\t formIndiceEncargos -> " + formIndiceEncargos
             + "\n\t\t formDesagio -> " + formDesagio
             + "\n\t\t isDate -> " + isDate
-            + "\t]\n"
+            + "\n\t]\n"
             ;
         }
     }

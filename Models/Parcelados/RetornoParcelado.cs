@@ -10,30 +10,43 @@ namespace calculadora_api.Models
 
     public class RetornoParcelado : Retorno<Parcelado>
     {
-        public Totais totais {get; set;} = new Totais();
+        public TotaisParcelas totais {get; set;} = new TotaisParcelas();
+        public List<InfoParaAmortizacao> infoParaAmortizacao { get; set; }
 
         public RetornoParcelado(
             string contractRef, 
             TabelaParcelados tabela,
             InfoParaCalculo infoParaCalculo, 
-            Rodape rodape
-        ) : base(contractRef, tabela, infoParaCalculo, rodape){ 
-            // this.totais.totalParcelasVencidas = tabela.totalParcelasVencidas;
-            // this.totais.totalParcelasVincendas = tabela.totalParcelasVincendas;
+            List<InfoParaAmortizacao> infoParaAmortizacao,
+            TotaisRodape rodape,
+            TotaisParcelas totaisParcelas
+        ) : base(contractRef, tabela, infoParaCalculo, rodape){
+            this.totais = totaisParcelas;
+            this.infoParaAmortizacao = infoParaAmortizacao;
+        }
+
+        public RetornoParcelado(
+            string contractRef, 
+            TabelaParcelados tabela,
+            InfoParaCalculo infoParaCalculo, 
+            TotaisRodape rodape,
+            TotaisParcelas totaisParcelas
+        ) : base(contractRef, tabela, infoParaCalculo, rodape){
+            this.totais = totaisParcelas;
         }
 
         public RetornoParcelado(){}
 
-        public static RetornoParcelado parse(JToken totais, JToken infoParaCalculo, JToken tabela, JToken rodape, JToken contractRef)
+        public static RetornoParcelado parse(JToken totaisJson, JToken infoParaCalculoJson, JToken infoParaAmortizacaoJson, JToken tabelaJson, JToken rodapeJson, JToken contractRefJson)
         {
-            Totais totais1 = Totais.parse(totais.SelectToken("totalParcelasVincendas"), totais.SelectToken("totalParcelasVencidas"));
-            InfoParaCalculo infoParaCalculo1 = InfoParaCalculo.parse(infoParaCalculo);
-            TabelaParcelados tabela1 = TabelaParcelados.parse(tabela);
-            Rodape rodape1 = Rodape.parse(rodape);
-            string cont = contractRef.ToString();
+            TotaisParcelas totais = TotaisParcelas.parse(totaisJson.SelectToken("totalParcelasVincendas"), totaisJson.SelectToken("totalParcelasVencidas"));
+            InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(infoParaCalculoJson);
+            List<InfoParaAmortizacao> infoParaAmortizacao = InfoParaAmortizacao.parse(infoParaAmortizacaoJson);
+            TabelaParcelados tabela = TabelaParcelados.parse(tabelaJson);
+            TotaisRodape rodape = TotaisRodape.parse(rodapeJson);
+            string contrato = contractRefJson.ToString();
 
-            RetornoParcelado retorno = new RetornoParcelado(cont, tabela1, infoParaCalculo1, rodape1);
-            retorno.totais = totais1;
+            RetornoParcelado retorno = new RetornoParcelado(contrato, tabela, infoParaCalculo, infoParaAmortizacao, rodape, totais);
             return retorno;
         }
 
@@ -44,10 +57,18 @@ namespace calculadora_api.Models
             + "\n\t contractRef -> " + contractRef
             + "\n\t totais -> " + totais.ToString()
             + "\n\t infoParaCalculo -> " + infoParaCalculo.ToString()
+            + "\n\t infoParaAmortizacao -> " + printAmortizacao()
             + "\n\t tabela -> " + printTabela()
             + "\n\t rodape -> " + rodape.ToString()
             + "\n]\n\n"
             ;
+        }
+
+        private string printAmortizacao() {
+            if (infoParaAmortizacao == null || infoParaAmortizacao.Count == 0) return "[]";
+            string str = "";
+            infoParaAmortizacao.ForEach(info => str += info.ToString());
+            return str;
         }
         
     }

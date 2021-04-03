@@ -38,25 +38,25 @@ namespace calculadora_api.Dao
         public Parcelado parseFrom() {
             Parcelado p = new Parcelado();
             p.Id = this.Id;
-            p.parcela.nparcelas = Convert.ToInt32(this.nparcelas);
-            p.parcela.parcelaInicial = this.parcelaInicial;
+            p.nparcelas = Convert.ToInt32(this.nparcelas);
+            p.parcelaInicial = this.parcelaInicial;
             p.indiceDataVencimento = this.indiceDataVencimento;
             p.indiceDataCalcAmor = this.indiceDataCalcAmor;
-            p.parcela.valorNoVencimento = this.valorNoVencimento;
+            p.valorNoVencimento = this.valorNoVencimento;
             p.subtotal = this.subtotal;
             p.amortizacao = this.amortizacao;
             p.totalDevedor = this.totalDevedor;
             p.contractRef = this.contractRef;
-            p.parcela.dataVencimento = U.toDateTime(this.dataVencimento);
+            p.dataVencimento = U.toDateTime(this.dataVencimento);
             p.indiceDV = this.indiceDV;
             p.indiceDCA = this.indiceDCA;
             p.dataCalcAmor = U.toDateTime(this.dataCalcAmor);
             p.valorPMTVincenda = this.valorPMTVincenda;
-            p.parcela.status = this.status;
+            p.status = this.status;
             p.ultimaAtualizacao = U.toDateTime(this.ultimaAtualizacao);
             p.encargosMonetarios = EncargosMonetarios.parse(this.encargosMonetarios);
             p.tipoParcela = this.tipoParcela;
-            p.infoParaAmortizacao = InfoParaAmortizacao.parse(this.infoParaAmortizacao);
+            //p.infoParaAmortizacao = InfoParaAmortizacao.parse(this.infoParaAmortizacao);
             p.vincenda = this.vincenda;
             return p;
         }
@@ -66,46 +66,5 @@ namespace calculadora_api.Dao
             return InfoParaCalculo.parse(this.infoParaCalculo);
         }
     }
-
-
-
-    // public class EncargosMonetarios
-    // {
-    //     [Key]
-    //     public int Id { get; set; }
-    //     public float correcaoPeloIndice { get; set; }
-    //     public JurosAm jurosAm { get; set; }
-    //     public float multa { get; set; }
-    // }
-    // public class JurosAm
-    // {
-    //     [Key]
-    //     public int Id { get; set; }
-    //     public float dias { get; set; }
-    //     public float percentsJuros { get; set; }
-    //     public float moneyValue { get; set; }
-    // }
-    // public class JurosAm
-    // {
-    //     [Key]
-    //     public int Id { get; set; }
-    //     public float formMulta { get; set; }
-    //     public float formJuros { get; set; }
-    //     public float formHonorarios { get; set; }
-    //     public float formMultaSobContrato { get; set; }
-    //     public float formIndiceEncargos { get; set; }
-    // }
-
-    // export interface InfoParaCalculo
-    // {
-    //     public int Id { get; set; }
-    //     public float formMulta { get; set; }
-    //     public float formJuros { get; set; }
-    //     public float formHonorarios { get; set; }
-    //     public float formMultaSobContrato { get; set; }
-    //     public float formIndiceEncargos { get; set; }
-    //     public float formIndiceDesagio { get; set; }
-    //     public string formIndice { get; set; }
-    // }
 
 }

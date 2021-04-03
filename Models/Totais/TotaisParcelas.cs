@@ -7,18 +7,20 @@ using System.Text.RegularExpressions;
 namespace calculadora_api.Models
 
 {
-    public class Totais
+    public class TotaisParcelas
     {
 
         public TotalParcelasVincendas totalParcelasVincendas {get; set;}
         public TotalParcelasVencidas totalParcelasVencidas {get; set;}
 
 
-        public Totais()
+        public TotaisParcelas()
         {
+            this.totalParcelasVincendas = new TotalParcelasVincendas();
+            this.totalParcelasVencidas = new TotalParcelasVencidas();
         }
 
-        public Totais(TotalParcelasVincendas totalParcelasVincendas, TotalParcelasVencidas totalParcelasVencidas)
+        public TotaisParcelas(TotalParcelasVincendas totalParcelasVincendas, TotalParcelasVencidas totalParcelasVencidas)
         {
             this.totalParcelasVincendas = totalParcelasVincendas;
             this.totalParcelasVencidas = totalParcelasVencidas;
@@ -30,12 +32,12 @@ namespace calculadora_api.Models
         }
 
 
-        public static Totais parse(string jsonString) {
-            return JsonSerializer.Deserialize<Totais>(jsonString);
+        public static TotaisParcelas parse(string jsonString) {
+            return JsonSerializer.Deserialize<TotaisParcelas>(jsonString);
         }
 
-        public static Totais parse(JToken vincendas, JToken vencidas) {
-            Totais totais = new Totais();
+        public static TotaisParcelas parse(JToken vincendas, JToken vencidas) {
+            TotaisParcelas totais = new TotaisParcelas();
             totais.totalParcelasVencidas = TotalParcelasVencidas.parse(vencidas);
             totais.totalParcelasVincendas = TotalParcelasVincendas.parse(vincendas);
             return totais;
@@ -44,10 +46,10 @@ namespace calculadora_api.Models
 
         public override string ToString()
         {
-            return "Totais: ["
-            + "\n\t vincendas -> " + totalParcelasVincendas
-            + "\n\t vencidas -> " + totalParcelasVencidas
-            + "\n]\n\n"
+            return "TotaisParcelas: ["
+            + "\n\t\t vincendas -> " + totalParcelasVincendas
+            + "\n\t\t vencidas -> " + totalParcelasVencidas
+            + "\n\t]\n\n"
             ;
         }
     }

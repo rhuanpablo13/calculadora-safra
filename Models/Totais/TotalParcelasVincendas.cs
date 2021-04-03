@@ -25,9 +25,9 @@ namespace calculadora_api.Models
         public override string ToString()
         {
             return "TotalParcelasVincendas: ["
-            + "\n\t totalDevedor -> " + totalDevedor
-            + "\n\t valorPMTVincenda -> " + valorPMTVincenda
-            + "\n]\n"
+            + "\n\t\t\t totalDevedor -> " + totalDevedor
+            + "\n\t\t\t valorPMTVincenda -> " + valorPMTVincenda
+            + "\n\t\t]\n"
             ;
         }
     }

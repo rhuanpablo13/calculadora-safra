@@ -46,12 +46,12 @@ namespace calculadora_api.Models
 
         public override string ToString()
         {
-            string str = "";
+            string str = "\t";
             if (registros.Count > 0)
             {
                 foreach (T item in registros)
                 {
-                    str += item.ToString() + "\n";
+                    str += item.ToString() + "\t\t\n";
                 }
             }
             return str;

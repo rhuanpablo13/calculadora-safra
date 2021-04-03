@@ -112,7 +112,7 @@ namespace calculadora_api.Services
         }
 
 
-        public Rodape calcularTotais(Tabela<ChequeEmpresarial> table)
+        public TotaisRodape calcularTotais(Tabela<ChequeEmpresarial> table)
         {
 
             float subtotal = 0;
@@ -135,7 +135,7 @@ namespace calculadora_api.Services
             // total_grandtotal = tmulta_sob_contrato + honorarios + valorDevedorAtualizado;
             total = honorarios + subtotal + multa;
 
-            return new Rodape(subtotal, honorarios, multa, total);
+            return new TotaisRodape(subtotal, honorarios, multa, total);
         }
 
 
