@@ -152,15 +152,18 @@ namespace calculadora_api.Controllers
 
 
             ParceladoPreService service = new ParceladoPreService(indiceController, retornoParcelado.infoParaCalculo);
-            service.calcularAmortizacao(
+            Parcelado retorno = service.calcularAmortizacao(
                 retornoParcelado.infoParaAmortizacao,
                 retornoParcelado.rodape,
                 retornoParcelado.totais.totalParcelasVencidas,
                 retornoParcelado.tabela
             );
 
-            return JObject.Parse(JsonConvert.SerializeObject(retornoParcelado));
-            // return Ok();
+            if (retorno == null) return JObject.Parse(JsonConvert.SerializeObject(retornoParcelado));
+
+            retorno.contractRef = retornoParcelado.contractRef;
+            retorno.infoParaCalculo = retornoParcelado.infoParaCalculo;
+            return JObject.Parse(JsonConvert.SerializeObject(retorno));
         }
 
 
@@ -221,7 +224,7 @@ namespace calculadora_api.Controllers
             retorno.contractRef = "SBA.132395/201414005952556 - MUTUO PREfalse";
             retorno.infoParaAmortizacao = ams;
             retorno.infoParaCalculo = infoParaCalculo;
-            retorno.rodape = service.rodape;
+            //retorno.rodape = service.rodape;
             
             // retorno.totais = totaisParcelas;
 
