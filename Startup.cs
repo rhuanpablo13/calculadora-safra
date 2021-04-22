@@ -60,8 +60,11 @@ namespace calculadora_api
                 (opt => opt.UseSqlServer(Configuration["Data:UserAPIConnection:ConnectionString"]));
 
             services.AddScoped<IUser, User>();
+
+
         }
 
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

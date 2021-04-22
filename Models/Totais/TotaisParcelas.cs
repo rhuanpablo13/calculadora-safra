@@ -44,6 +44,18 @@ namespace calculadora_api.Models
         }
 
 
+        public void round(int decimais) {
+            totalParcelasVincendas.valorPMTVincenda = MathF.Round(totalParcelasVincendas.valorPMTVincenda, decimais);
+            totalParcelasVincendas.totalDevedor = MathF.Round(totalParcelasVincendas.totalDevedor, decimais);
+            totalParcelasVencidas.valorNoVencimento = MathF.Round(totalParcelasVencidas.valorNoVencimento, decimais);
+            totalParcelasVencidas.correcaoPeloIndice = MathF.Round(totalParcelasVencidas.correcaoPeloIndice, decimais);
+            totalParcelasVencidas.money = MathF.Round(totalParcelasVencidas.money, decimais);
+            totalParcelasVencidas.somaMulta = MathF.Round(totalParcelasVencidas.somaMulta, decimais);
+            totalParcelasVencidas.subTotal = MathF.Round(totalParcelasVencidas.subTotal, decimais);
+            totalParcelasVencidas.amortizacao = MathF.Round(totalParcelasVencidas.amortizacao, decimais);
+            totalParcelasVencidas.totalDevedor = MathF.Round(totalParcelasVencidas.totalDevedor, decimais);
+        }
+
         public override string ToString()
         {
             return "TotaisParcelas: ["

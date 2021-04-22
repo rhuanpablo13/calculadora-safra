@@ -1,118 +1,76 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using calculadora_api.Dao;
-// using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Models
-
 {
 
-    public class Parcelado
+    public class Parcelado : Retorno<RegistroParcela>
     {
-        [Key]
-        public int Id { get; set; }
-        public int nparcelas { get; set; }
-        public float parcelaInicial { get; set; }
-        public DateTime dataVencimento { get; set; }
-        public float valorNoVencimento { get; set; }
-        public string status { get; set; }
-        public string indiceDV { get; set; }
-        public float indiceDataVencimento { get; set; }
-        public string indiceDCA { get; set; }
-        public float indiceDataCalcAmor { get; set; }
-        public DateTime dataCalcAmor { get; set; }
+        public TotaisParcelas totais {get; set;} = new TotaisParcelas();
+        public List<InfoParaAmortizacao> infoParaAmortizacao { get; set; }
 
-        
-        public EncargosMonetarios encargosMonetarios = new EncargosMonetarios();
+        public Parcelado(
+            string contractRef, 
+            List<RegistroParcela> registros,
+            InfoParaCalculo infoParaCalculo, 
+            List<InfoParaAmortizacao> infoParaAmortizacao,
+            TotaisRodape rodape,
+            TotaisParcelas totaisParcelas
+        ) : base(contractRef, registros, infoParaCalculo, rodape){
+            this.totais = totaisParcelas;
+            this.infoParaAmortizacao = infoParaAmortizacao;
+        }
 
-        public float subtotal { get; set; }
-        public float valorPMTVincenda { get; set; }
-        public float amortizacao { get; set; }
-        public float totalDevedor { get; set; }
-        public string contractRef { get; set; }        
-        public DateTime ultimaAtualizacao { get; set; }
-        public string tipoParcela { get; set; }
-        // public InfoParaAmortizacao infoParaAmortizacao { get; set; }
-        public Boolean vincenda { set; get; }
-        private dynamic dynamic { get; set; }
+        public Parcelado(
+            string contractRef, 
+            List<RegistroParcela> registros,
+            InfoParaCalculo infoParaCalculo, 
+            TotaisRodape rodape,
+            TotaisParcelas totaisParcelas
+        ) : base(contractRef, registros, infoParaCalculo, rodape){
+            this.totais = totaisParcelas;
+        }
 
-        public Parcelado(JObject dados)
+        public Parcelado(){}
+
+        public static Parcelado parse(JToken totaisJson, JToken infoParaCalculoJson, JToken infoParaAmortizacaoJson, JToken tabelaJson, JToken rodapeJson, JToken contractRefJson)
         {
-            Object tmp = dados.ToObject<Object>();
-            dynamic = Newtonsoft.Json.JsonConvert.DeserializeObject(dados.ToString());
+            TotaisParcelas totais = TotaisParcelas.parse(totaisJson.SelectToken("totalParcelasVincendas"), totaisJson.SelectToken("totalParcelasVencidas"));
+            InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(infoParaCalculoJson);
+            List<InfoParaAmortizacao> infoParaAmortizacao = InfoParaAmortizacao.parse(infoParaAmortizacaoJson);
+            Tabela<RegistroParcela> registros = new Tabela<RegistroParcela>();
+            registros.carregarRegistros(tabelaJson); // TODO: validar o retorno do carregar registros
+            TotaisRodape rodape = TotaisRodape.parse(rodapeJson);
+            string contrato = contractRefJson.ToString();
+
+            Parcelado retorno = new Parcelado(contrato, registros.getRegistros(), infoParaCalculo, infoParaAmortizacao, rodape, totais);
+            return retorno;
         }
 
-        public Parcelado() { }
-
-        public void carregarDadosEntrada(string contractRef, InfoParaCalculo infoParaCalculo, Parcela parcela)
-        {
-            this.contractRef = contractRef;
-            this.nparcelas = parcela.nparcelas;
-            this.dataVencimento = parcela.dataVencimento;
-            this.parcelaInicial = parcela.parcelaInicial;
-            this.valorNoVencimento = parcela.valorNoVencimento;
-            this.status = parcela.status;
-
-            this.indiceDCA = infoParaCalculo.formIndice;
-            this.indiceDV = infoParaCalculo.formIndice;
-            this.dataCalcAmor = infoParaCalculo.formDataCalculo;
-        }
-
-
-        public ParceladoPreDao parseToDao(InfoParaCalculo infoParaCalculo) {
-            ParceladoPreDao dao = new ParceladoPreDao();
-            dao.Id = this.Id;
-            dao.nparcelas = this.nparcelas.ToString();
-            dao.indiceDV = this.indiceDV;
-            dao.indiceDataVencimento = this.indiceDataVencimento;
-            dao.indiceDCA = this.indiceDCA;
-            dao.indiceDataCalcAmor = this.indiceDataCalcAmor;
-            dao.dataCalcAmor = this.dataCalcAmor.ToString("yyyy-MM-dd");
-            dao.encargosMonetarios = JsonSerializer.Serialize(this.encargosMonetarios);
-            dao.subtotal = this.subtotal;
-            dao.valorPMTVincenda = this.valorPMTVincenda;
-            dao.amortizacao = this.amortizacao;
-            dao.totalDevedor = this.totalDevedor;
-            dao.contractRef = this.contractRef;
-            dao.ultimaAtualizacao = this.ultimaAtualizacao.ToString("yyyy-MM-dd");
-            dao.infoParaCalculo = JsonSerializer.Serialize(infoParaCalculo);
-            dao.tipoParcela = this.tipoParcela;
-            // dao.infoParaAmortizacao = JsonSerializer.Serialize(this.infoParaAmortizacao);
-            dao.vincenda = this.vincenda;
-            return dao;
-        }
-        
 
         public override string ToString()
         {
-            return " Parcelado: ["
-                + "\n\t Id -> " + Id 
-                + "\n\t nparcelas -> " + nparcelas
-                + "\n\t parcelaInicial -> " + parcelaInicial
-                + "\n\t dataVencimento -> " + dataVencimento
-                + "\n\t valorNoVencimento -> " + valorNoVencimento
-                + "\n\t status -> " + status 
-                + "\n\t indiceDV -> " + indiceDV 
-                + "\n\t indiceDataVencimento -> " + indiceDataVencimento 
-                + "\n\t indiceDCA -> " + indiceDCA 
-                + "\n\t indiceDataCalcAmor -> " + indiceDataCalcAmor 
-                + "\n\t dataCalcAmor -> " + dataCalcAmor 
-                + "\n\t encargosMonetarios -> " + encargosMonetarios 
-                + "\n\t subtotal -> " + subtotal 
-                + "\n\t valorPMTVincenda -> " + valorPMTVincenda 
-                + "\n\t amortizacao -> " + amortizacao 
-                + "\n\t totalDevedor -> " + totalDevedor 
-                + "\n\t contractRef -> " + contractRef 
-                + "\n\t ultimaAtualizacao -> " + ultimaAtualizacao 
-                // + "\n\t infoParaCalculo -> " + infoParaCalculo 
-                + "\n\t tipoParcela -> " + tipoParcela 
-                // + "\n\t infoParaAmortizacao -> " + infoParaAmortizacao 
-                + "\n\t vincenda -> " + vincenda + "\n]"
+            return "Retorno: ["
+            + "\n\t contractRef -> " + contractRef
+            + "\n\t totais -> " + totais.ToString()
+            + "\n\t infoParaCalculo -> " + infoParaCalculo.ToString()
+            + "\n\t infoParaAmortizacao -> " + printAmortizacao()
+            + "\n\t registros -> " + printTabela()
+            + "\n\t rodape -> " + rodape.ToString()
+            + "\n]\n\n"
             ;
         }
+
+        private string printAmortizacao() {
+            if (infoParaAmortizacao == null || infoParaAmortizacao.Count == 0) return "[]";
+            string str = "";
+            infoParaAmortizacao.ForEach(info => str += info.ToString());
+            return str;
+        }
+        
     }
-
-
 }

@@ -35,10 +35,10 @@ namespace calculadora_api.Dao
 
 
 
-        public Parcelado parseFrom() {
-            Parcelado p = new Parcelado();
+        public RegistroParcela parseFrom() {
+            RegistroParcela p = new RegistroParcela();
             p.Id = this.Id;
-            p.nparcelas = Convert.ToInt32(this.nparcelas);
+            p.nparcelas = this.nparcelas;
             p.parcelaInicial = this.parcelaInicial;
             p.indiceDataVencimento = this.indiceDataVencimento;
             p.indiceDataCalcAmor = this.indiceDataCalcAmor;

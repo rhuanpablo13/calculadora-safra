@@ -2,9 +2,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using calculadora_api.Models;
 using Converter;
-using Newtonsoft.Json;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace calculadora_api.Dao
 

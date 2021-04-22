@@ -22,7 +22,7 @@ namespace calculadora_api.Models
         public int formDesagio { get; set; }
         public bool isDate { get; set; }
 
-        public float desagio { get; set; }
+        //public float desagio { get; set; }
 
         public InfoParaCalculo()
         {

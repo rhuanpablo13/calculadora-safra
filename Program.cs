@@ -18,5 +18,7 @@ namespace calculadora_api
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        
     }
 }

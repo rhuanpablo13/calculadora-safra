@@ -19,6 +19,10 @@ namespace calculadora_api.Services
 
         private InfoParaCalculo infoParaCalculo;
 
+        public Tabela<RegistroParcela> tabela {get; set;} // TODO: mudar para privado
+
+        public TotaisRodape rodape = new TotaisRodape(); // TODO: excluir
+
         public ParceladoPreService(IndiceController indiceController, InfoParaCalculo infoParaCalculo)
         {
             this.indiceController = indiceController;
@@ -26,25 +30,12 @@ namespace calculadora_api.Services
         }
 
 
-        public TabelaParcelados calcular(string contractRef, List<Parcela> parcelas)
-        {
-            Parcelado parcelado;
-            TabelaParcelados table = new TabelaParcelados();
-            foreach (var parcela in parcelas)
-            {
-                parcelado = new Parcelado();
-                parcelado.carregarDadosEntrada(contractRef, infoParaCalculo, parcela);
-                parcelado = calcular(parcelado);
-                table.adicionarRegistro(parcelado);
-            }
-            return table;
-        }
+        float a = 0;
 
-
-        public TotaisParcelas calcularTotaisParcelas(TabelaParcelados tabelaParcelados) {
+        public TotaisParcelas calcularTotaisParcelas(Tabela<RegistroParcela> tabelaParcelados) {
 
             TotaisParcelas totais = new TotaisParcelas();
-            foreach (Parcelado parcelado in tabelaParcelados.getRegistros())
+            foreach (RegistroParcela parcelado in tabelaParcelados.getRegistros())
             {
                 if (parcelado.vincenda) {
                     totais.totalParcelasVincendas.valorPMTVincenda += parcelado.valorPMTVincenda;
@@ -59,14 +50,18 @@ namespace calculadora_api.Services
                     totais.totalParcelasVencidas.totalDevedor += parcelado.totalDevedor;
                 }
             }
+            totais.round(2);
             return totais;
         }
         
 
-        private Parcelado calcular(Parcelado p)
+        public RegistroParcela calcular(RegistroParcela p)
         {
             //dias
-            p.encargosMonetarios.jurosAm.dias = UService.numberOfDays(p.dataCalcAmor, p.dataVencimento);
+            if (!p.vincenda) {
+                p.encargosMonetarios.jurosAm.dias = UService.numberOfDays(p.dataCalcAmor, p.dataVencimento);
+            }
+
             //indiceDataVencimento
             p.indiceDataVencimento = UService.getIndice(
                 p.indiceDV, p.dataVencimento, this.infoParaCalculo.formIndiceEncargos, indiceController
@@ -77,35 +72,55 @@ namespace calculadora_api.Services
             );
 
             //correcaoPeloIndice
-            p.encargosMonetarios.correcaoPeloIndice = (
-                (p.valorNoVencimento / p.indiceDataVencimento) * p.indiceDataCalcAmor
-            ) - p.valorNoVencimento;
-            //percentsJuros
-            p.encargosMonetarios.jurosAm.percentsJuros = (this.infoParaCalculo.formJuros / 30) * p.encargosMonetarios.jurosAm.dias;
-            //moneyValue
-            p.encargosMonetarios.jurosAm.moneyValue = ((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100);
-            
-            //multa
-            p.encargosMonetarios.multa = (p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100);
-            //subtotal
-            p.subtotal = p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa;
-            //valorPMTVincenda
-            p.valorPMTVincenda = p.valorNoVencimento * this.infoParaCalculo.desagio;
-            
-            p.amortizacao = 0;
+            if (!p.vincenda) {
+                p.encargosMonetarios.correcaoPeloIndice = MathF.Round((
+                    (p.valorNoVencimento / p.indiceDataVencimento) * p.indiceDataCalcAmor
+                ) - p.valorNoVencimento, 2);
+            }
 
+            if (!p.vincenda) {
+                //percentsJuros
+                p.encargosMonetarios.jurosAm.percentsJuros = MathF.Round((this.infoParaCalculo.formJuros / 30) * p.encargosMonetarios.jurosAm.dias, 2);
+                //moneyValue
+                p.encargosMonetarios.jurosAm.moneyValue = MathF.Round(((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100), 2);
+                //multa
+                p.encargosMonetarios.multa = p.status != "Amortizada"
+                    ? MathF.Round((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100), 2)
+                    : 0;
+
+                //subtotal
+                p.subtotal = MathF.Round(p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa, 2);
+            }
+            
+            //valorPMTVincenda
+            p.valorPMTVincenda = MathF.Round(p.valorNoVencimento * (this.infoParaCalculo.formDesagio / 100), 2);
+            
             //totalDevedor
-            p.totalDevedor = !p.vincenda 
-            ? p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa + p.amortizacao 
-            : p.valorPMTVincenda;
+            if (!p.vincenda && p.status != "Amortizada") {
+                p.totalDevedor = 
+                    p.valorNoVencimento + 
+                    p.encargosMonetarios.correcaoPeloIndice +
+                    p.encargosMonetarios.jurosAm.moneyValue +
+                    p.encargosMonetarios.multa +
+                    p.amortizacao;
+            }
+
+            if (!p.vincenda && p.status == "Amortizada") {
+                p.totalDevedor = p.subtotal - p.amortizacao;
+            }
+            // TODO: tratar quando for vincenda e/ou amortizada
+            // : p.valorPMTVincenda;            
+            p.totalDevedor = MathF.Round(p.totalDevedor, 2);
 
             return p;
         }
 
 
-        public void calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas) {
+        public void calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas, List<RegistroParcela> tabelaParcelados) {
 
-            if (amortizacoes == null) return;
+            if (amortizacoes == null) return ;
+
+            this.tabela = new Tabela<RegistroParcela>();
 
             foreach (var amt in amortizacoes)
             {
@@ -113,8 +128,9 @@ namespace calculadora_api.Services
                 {
                     // TODO: validar quando amortização for maior que o total devedor
                     case "Final":
-                    rodape = this.calcularTotaisRodape(
-                        totalParcelasVencidas, 
+                    
+                    this.rodape = this.calcularTotaisRodape(
+                        totalParcelasVencidas,
                         amt.saldo_devedor,
                         rodape.subtotal,
                         rodape.honorario,
@@ -125,25 +141,54 @@ namespace calculadora_api.Services
                     break;
 
                     case "Data Diferenciada":
-
+                    calcularDiferenciada(amt, tabelaParcelados);
                     break;
 
                     default:
+                    calcularDiferenciada(amt, tabelaParcelados);
                     break;
                 }
-            }            
-            Console.WriteLine("calculando amortização");
-            Console.WriteLine(rodape);
+            }
+            
+            // Console.WriteLine("amortização calculada");
+            // Console.WriteLine(this.rodape);
+
         }
 
 
-        public void calcularDiferenciada(InfoParaAmortizacao amortizacao, RetornoParcelado retornoParcelado) {
+        public void calcularDiferenciada(InfoParaAmortizacao amortizacao, List<RegistroParcela> tabelaParcelados) {
             
-            
-            // foreach (Parcelado parcelado in retornoParcelado.tabela)
-            // {
-            //     var valorDevedor = parcelado.vincenda ? parcelado.valorPMTVincenda : parcelado.subtotal;
-                
+            foreach (RegistroParcela parcelado in tabelaParcelados)
+            {
+                var valorDevedor = parcelado.vincenda ? parcelado.valorPMTVincenda : parcelado.subtotal;
+                string situacao = parcelado.status;
+
+                if (situacao == "Paga") continue;
+
+                if (valorDevedor == amortizacao.saldo_devedor) {
+                    Console.WriteLine("iguais");
+                    parcelado.amortizacao = amortizacao.saldo_devedor;
+                    parcelado.status = "Amortizado";
+                    parcelado.totalDevedor = 0;
+                    this.tabela.adicionarRegistro(parcelado);
+
+                } else if (valorDevedor > amortizacao.saldo_devedor) {
+                    Console.WriteLine(">");
+
+                    parcelado.dataCalcAmor = amortizacao.data_vencimento; //ok
+                    parcelado.amortizacao = amortizacao.saldo_devedor; //ok
+                    parcelado.status = "Amortizada"; //ok
+                    RegistroParcela parceladoCalculado = this.calcular(parcelado);
+
+                    RegistroParcela novoParcelado = novaParcela(parceladoCalculado, amortizacao, true);
+                    Console.WriteLine(novoParcelado);
+                    Console.WriteLine();
+                    // Console.WriteLine(novoParcelado);
+                    break;
+                } else {
+                    Console.WriteLine("<");
+                    this.tabela.adicionarRegistro(parcelado);
+                }
 
             //     valorDevedor == amortizacao.saldo_devedor;
             //         parcelado.amortizacao = amortizacao.saldo_devedor;
@@ -163,28 +208,29 @@ namespace calculadora_api.Services
             //         // o que sobrar da amortização, jogar na parcela de baixo
             //         // chamar a funcao novaParcela()
 
-            // }
+            }
 
             // recalcular os totais das colunas e o rodapé,
             // revisar o calculo do rodapé considerando a amortizaçao
         }
 
 
-        public void novaParcela(Parcelado parcelado, InfoParaAmortizacao infoParaAmortizacao) {
-            // criar uma nova parcela
-            // Parcelado novaParcela = new Parcelado();
+        public RegistroParcela novaParcela(RegistroParcela parcelado, InfoParaAmortizacao infoParaAmortizacao, bool maior) {
 
-            // //colocar decimal crescente na parcela recebida por parametro
-            // novaParcela.dataCalcAmor = parcelado.dataCalcAmor;
-            // parcelado.dataCalcAmor = infoParaAmortizacao.data_vencimento;            
-            // novaParcela.parcela.dataVencimento = infoParaAmortizacao.data_vencimento;
+            RegistroParcela novaParcela = new RegistroParcela();
+            // TODO: aqui a parcela vai receber o . alguma coisa
+            float nrParcela = float.Parse(parcelado.nparcelas) + 0.1f;
+            novaParcela.nparcelas = nrParcela.ToString();
+            novaParcela.dataVencimento = infoParaAmortizacao.data_vencimento;
+            novaParcela.dataCalcAmor = infoParaCalculo.formDataCalculo;
+            novaParcela.indiceDV = parcelado.indiceDV;
+            novaParcela.indiceDCA = parcelado.indiceDCA;
+            novaParcela.contractRef = parcelado.contractRef;
+            novaParcela.valorNoVencimento = parcelado.totalDevedor;
             
-            // novaParcela.indiceDataVencimento = indiceController.GetIndiceItemsByDate(parcelado.indiceDV, novaParcela.parcela.dataVencimento);
-            // novaParcela.indiceDataCalcAmor = indiceController.GetIndiceItemsByDate(parcelado.indiceDCA, novaParcela.dataCalcAmor);
-            // novaParcela.parcela.valorNoVencimento = parcelado.totalDevedor;
-
-
-
+            novaParcela = this.calcular(novaParcela);
+            novaParcela.status = "Aberto";
+            return novaParcela;
         }
 
 
@@ -198,29 +244,17 @@ namespace calculadora_api.Services
         private TotaisRodape calcularTotaisRodape(TotalParcelasVencidas totalParcelasVencidas, float saldoDevedorAmortizacao, float subtotal, float honorarios, float amortizacao, float multa, float total)
         {
 
-            // Console.WriteLine(totalParcelasVencidas);
-            // Console.WriteLine(saldoDevedorAmortizacao);
-            // Console.WriteLine(subtotal);
-            // Console.WriteLine(honorarios);
-            // Console.WriteLine(amortizacao);
-            // Console.WriteLine(multa);
-            // Console.WriteLine(total);
-            Console.WriteLine("-------------");
-
             subtotal = totalParcelasVencidas.totalDevedor;
-
-            // Console.WriteLine(amortizacao);
-            // Console.WriteLine(saldoDevedorAmortizacao);
-            // Console.WriteLine("---");
-
             amortizacao += saldoDevedorAmortizacao;
 
             // honorarios = valorDevedorAtualizado 
-            honorarios = subtotal * (this.infoParaCalculo.formHonorarios / 100);
+            honorarios = MathF.Round(subtotal * (this.infoParaCalculo.formHonorarios / 100), 2);
+
             // multa = ((valorDevedorAtualizado + honorarios) * multa_sob_contrato grupo 2 / 100
-            multa = (subtotal + honorarios) * (this.infoParaCalculo.formMultaSobContrato / 100);
+            multa = MathF.Round((subtotal + honorarios) * (this.infoParaCalculo.formMultaSobContrato / 100), 2);
+            
             // total_grandtotal = tmulta_sob_contrato + honorarios + valorDevedorAtualizado;
-            total = (honorarios + subtotal + multa) - amortizacao;
+            total = MathF.Round((honorarios + subtotal + multa) - amortizacao, 2);
 
             // calcular a amortização
             return new TotaisRodape(subtotal, honorarios, multa, total, amortizacao);

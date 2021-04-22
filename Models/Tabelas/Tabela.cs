@@ -17,6 +17,7 @@ namespace calculadora_api.Models
                 registros = new List<T>();
         }
 
+        // TODO: validar o carregar registros
         public void carregarRegistros(JToken table)
         {
             if (table != null)

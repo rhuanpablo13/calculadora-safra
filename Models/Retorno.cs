@@ -13,25 +13,25 @@ namespace calculadora_api.Models
     {
         public string contractRef { get; set; }
         public InfoParaCalculo infoParaCalculo { get; set; }
-        public List<T> tabela { get; set; }
+        public List<T> tabela { get; set; } // List para que o jsonSerialize saiba transformar em json
         public TotaisRodape rodape { get; set; }
 
 
         public Retorno() {}
         
-        public Retorno(string contractRef, Tabela<T> tabela, InfoParaCalculo infoParaCalculo, TotaisRodape rodape)
+        public Retorno(string contractRef, List<T> tabela, InfoParaCalculo infoParaCalculo, TotaisRodape rodape)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = infoParaCalculo;
-            this.tabela = tabela.getRegistros();
+            this.tabela = tabela;
             this.rodape = rodape;
         }
 
-        public Retorno(string contractRef, Tabela<T> tabela, TotaisRodape rodape)
+        public Retorno(string contractRef, List<T> tabela, TotaisRodape rodape)
         {
             this.contractRef = contractRef;
             this.infoParaCalculo = new InfoParaCalculo();
-            this.tabela = tabela.getRegistros();
+            this.tabela = tabela;
             this.rodape = rodape;
         }
 

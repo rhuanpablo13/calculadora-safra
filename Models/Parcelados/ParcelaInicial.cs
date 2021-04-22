@@ -8,32 +8,32 @@ namespace calculadora_api.Models
 
 {
 
-    public class Parcela
+    public class ParcelaInicial
     {
 
         [Key]
-        public int nparcelas { get; set; }
+        public string nparcelas { get; set; }
         public float parcelaInicial { get; set; }
         public DateTime dataVencimento { get; set; }
         public float valorNoVencimento { get; set; }
         public string status { get; set; }
 
 
-        public static List<Parcela> parse(JToken infoParcelaJson)
+        public static List<ParcelaInicial> parse(JToken infoParcelaJson)
         {
-            List<Parcela> info = infoParcelaJson.ToObject<List<Parcela>>();
+            List<ParcelaInicial> info = infoParcelaJson.ToObject<List<ParcelaInicial>>();
             return info;
         }
 
 
-        public static Parcela parse(string jsonString) {
-            return JsonSerializer.Deserialize<Parcela>(jsonString);
+        public static ParcelaInicial parse(string jsonString) {
+            return JsonSerializer.Deserialize<ParcelaInicial>(jsonString);
         }
 
 
         public override string ToString()
         {
-            return " Parcela: ["
+            return " ParcelaInicial: ["
             + "\n\t nparcelas -> " + nparcelas
             + "\n\t parcelaInicial -> " + parcelaInicial
             + "\n\t dataVencimento -> " + dataVencimento

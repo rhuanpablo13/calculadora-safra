@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using System;
+
 namespace calculadora_api.Models
 
 {
@@ -17,7 +19,13 @@ namespace calculadora_api.Models
         }
 
         public static EncargosMonetarios parse(string jsonString) {
-            return JsonSerializer.Deserialize<EncargosMonetarios>(jsonString);
+            Console.WriteLine(jsonString);
+            EncargosMonetarios em = JsonSerializer.Deserialize<EncargosMonetarios>(jsonString);
+            // float x = 270.61864847349717630804948048M;
+            // float y = Math.Round(x,3);
+
+            // float d = Math.Round(em.correcaoPeloIndice, 3);
+            return em;
         }
 
         public override string ToString()

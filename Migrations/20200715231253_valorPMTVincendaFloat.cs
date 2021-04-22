@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace calculadora_api.Migrations
 {
@@ -6,7 +7,7 @@ namespace calculadora_api.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<double>(
+            migrationBuilder.AddColumn<float>(
                 name: "valorPMTVincenda",
                 table: "ParceladoPreItems",
                 nullable: false,

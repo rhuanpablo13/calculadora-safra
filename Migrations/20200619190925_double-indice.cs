@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace calculadora_api.Migrations
 {
@@ -6,22 +7,22 @@ namespace calculadora_api.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<double>(
+            migrationBuilder.AlterColumn<float>(
                 name: "valor",
                 table: "IndiceItems",
                 nullable: false,
-                oldClrType: typeof(double),
+                oldClrType: typeof(float),
                 oldType: "real");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<double>(
+            migrationBuilder.AlterColumn<float>(
                 name: "valor",
                 table: "IndiceItems",
                 type: "real",
                 nullable: false,
-                oldClrType: typeof(double));
+                oldClrType: typeof(float));
         }
     }
 }

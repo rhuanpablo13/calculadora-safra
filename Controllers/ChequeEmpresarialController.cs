@@ -121,7 +121,7 @@ namespace calculadora_api.Controllers
             InfoLancamento infoLancamento = InfoLancamento.parse(dados.SelectToken("infoLancamento"));
             InfoParaCalculo infoParaCalculo = InfoParaCalculo.parse(dados.SelectToken("infoParaCalculo"));
             LancamentosService lancamentosService = new LancamentosService(indiceController);
-            ChequeEmpresarial novoCheque;
+            ChequeEmpresarial novoCheque; 
             Tabela<ChequeEmpresarial> table = new Tabela<ChequeEmpresarial>();
 
             table.carregarRegistros(dados.SelectToken("table"));
@@ -139,7 +139,7 @@ namespace calculadora_api.Controllers
             {
                 table.adicionarRegistro(novoCheque);
                 TotaisRodape totais = lancamentosService.calcularTotais(table);
-                Retorno<ChequeEmpresarial> retorno = new Retorno<ChequeEmpresarial>(contractRef, table, totais);
+                Retorno<ChequeEmpresarial> retorno = new Retorno<ChequeEmpresarial>(contractRef, table.getRegistros(), totais);
                 return JObject.Parse(JsonConvert.SerializeObject(retorno));
             }
 

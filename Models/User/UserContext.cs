@@ -16,6 +16,21 @@ namespace calculadora_api.Models
 
 
 
+        // protected override void OnModelCreating(ModelBuilder builder)
+        // {
+        //     ;
+        //     foreach (var property in builder.Model.GetEntityTypes()
+        //         .SelectMany(t => t.GetProperties())
+        //         .Where(p => p.ClrType == typeof(float) || p.ClrType == typeof(float?)))
+        //     {
+              
+        //         property.Relational().ColumnType = "float(18,2)";
+
+              
+        //     }
+        // }
+
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
     }
 }
