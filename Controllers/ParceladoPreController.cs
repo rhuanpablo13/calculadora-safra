@@ -156,8 +156,11 @@ namespace calculadora_api.Controllers
                 retornoParcelado.infoParaAmortizacao,
                 retornoParcelado.rodape,
                 retornoParcelado.totais.totalParcelasVencidas,
-                retornoParcelado.tabela
+                retornoParcelado.tabela,
+                retornoParcelado.contractRef
             );
+
+            // Console.WriteLine(retorno);
 
             if (retorno == null) return JObject.Parse(JsonConvert.SerializeObject(retornoParcelado));
 
@@ -215,7 +218,8 @@ namespace calculadora_api.Controllers
                 ams,
                 totaisRodape,
                 totalParcelasVencidas,
-                gerarTabela().getRegistros()
+                gerarTabela().getRegistros(),
+                "contrato infos"
             );
 
             Parcelado retorno = new Parcelado();

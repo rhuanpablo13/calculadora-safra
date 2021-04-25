@@ -21,7 +21,7 @@ namespace calculadora_api.Services
 
         public Tabela<RegistroParcela> tabela {get; set;} // TODO: mudar para privado
 
-        
+        private bool calcularMulta = true;
 
         public ParceladoPreService(IndiceController indiceController, InfoParaCalculo infoParaCalculo)
         {
@@ -84,10 +84,9 @@ namespace calculadora_api.Services
                 //moneyValue
                 p.encargosMonetarios.jurosAm.moneyValue = MathF.Round(((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100), 2);
                 //multa
-                p.encargosMonetarios.multa = p.status != "Amortizada"
+                p.encargosMonetarios.multa = this.calcularMulta
                     ? MathF.Round((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100), 2)
                     : 0;
-
                 //subtotal
                 p.subtotal = MathF.Round(p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa, 2);
             }
@@ -114,60 +113,110 @@ namespace calculadora_api.Services
 
             return p;
         }
+        
+        
 
+        public Parcelado calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas, List<RegistroParcela> tabelaParcelados, string contractRef) {
 
-        public Parcelado calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas, List<RegistroParcela> tabelaParcelados) {
-
-            Parcelado parcelado = new Parcelado();
-            if (amortizacoes == null) {
+            if (amortizacoes == null || amortizacoes.Count == 0) {
                 return null;
             }
 
+            if (tabelaParcelados == null || tabelaParcelados.Count == 0) {
+                return null;
+            }
 
-            Tabela<RegistroParcela> tabela = new Tabela<RegistroParcela>();            
-            List<InfoParaAmortizacao> amortizacoesDoRodape = new List<InfoParaAmortizacao>();
+            Tabela<RegistroParcela> tabela = new Tabela<RegistroParcela>();
+            tabela.adicionarRegistro(tabelaParcelados[0]);
+            //tabelaParcelados.RemoveAt(0);
 
-            foreach (var amt in amortizacoes)
-            {
-                switch (amt.tipo)
+            List<InfoParaAmortizacao> amortizacoesFinal = new List<InfoParaAmortizacao>();
+            RegistroParcela parceladoRegistro;
+            bool proximo = true;
+            int i = 0;
+            int controle = 5;
+
+            List<InfoParaAmortizacao> amortizacoesAux = amortizacoes;
+            // removendo as amortizações do tipo "Final" e separando para serem calculadas por último
+            for (int j = 0; j < amortizacoes.Count; j++) {
+                InfoParaAmortizacao amortizacao = amortizacoes[j];
+                if (amortizacao.tipo == "Final") {
+                    amortizacoesFinal.Add(amortizacao);
+                    amortizacoesAux.RemoveAt(j);
+                }
+            }
+            amortizacoes = amortizacoesAux;
+
+
+            do {
+                parceladoRegistro = tabela.getRegistros()[i];
+                var valorDevedor = parceladoRegistro.vincenda ? parceladoRegistro.valorPMTVincenda : parceladoRegistro.subtotal;
+                string situacao = parceladoRegistro.status;
+                
+                if (situacao == "Pago" || situacao == "Amortizada") {
+                    i++; // vai pro próximo registro
+                    tabela.adicionarRegistro(tabelaParcelados[i]);
+                    continue;
+                }
+
+
+                // Aberto
+                for (int j = 0; j < amortizacoes.Count; j++)
                 {
-                    // TODO: validar quando amortização for maior que o total devedor
-                    case "Final":
-                    amortizacoesDoRodape.Add(amt);
-                    break;
+                    InfoParaAmortizacao amortizacao = amortizacoes[j];
 
-                    case "Data Diferenciada":
-                    RegistroParcela parceladoTemp;
-                    foreach (RegistroParcela registro in tabelaParcelados) {
-                        parceladoTemp = calcularDiferenciada(amt, registro);
-                        if (parceladoTemp.status == "Amortizado") {
-                            tabela.adicionarRegistro(parceladoTemp);
-                            RegistroParcela novoParcelado = novaParcela(parceladoTemp, amt, true);
-                            tabela.adicionarRegistro(novoParcelado);
-                        }
+                    if (valorDevedor == amortizacao.saldo_devedor) {
+                        parceladoRegistro.amortizacao = amortizacao.saldo_devedor;
+                        parceladoRegistro.status = "Pago";
+                        parceladoRegistro.totalDevedor = 0;
+                        tabela.getRegistros()[i] = parceladoRegistro; // atualiza o registro no array
+                        amortizacoes.RemoveAt(j);
+                        break;
                     }
-                    break;
 
-                    default:
-                    //calcularDiferenciada(amt, tabelaParcelados);
-                    break;
+                    if (valorDevedor > amortizacao.saldo_devedor) {
+                        Console.WriteLine("Entrou aqui");
+                        parceladoRegistro.dataCalcAmor = amortizacao.data_vencimento; //ok
+                        parceladoRegistro.amortizacao = amortizacao.saldo_devedor; //ok
+                        parceladoRegistro.status = "Amortizada"; //ok
+                        parceladoRegistro = this.calcular(parceladoRegistro);
+                        tabela.getRegistros()[i] = parceladoRegistro; // atualiza o registro no array
+                        RegistroParcela novoParcelado = novaParcela(parceladoRegistro, amortizacao, true);
+                        tabela.adicionarRegistro(novoParcelado);
+                        proximo = true;
+                        i++;
+                        break;
+                    }
+
+                    if (valorDevedor < amortizacao.saldo_devedor) {
+                        proximo = false;
+                        Console.WriteLine("Amortização é maior que a parcela");
+                    }
+
                 }
-            }
 
-            TotaisParcelas totais = new TotaisParcelas();
-            totais.totalParcelasVencidas = totalParcelasVencidas;
-            parcelado.totais = totais;
-            parcelado.tabela = tabela.getRegistros();            
-            parcelado.rodape = rodape;
+                controle--;
+                if (controle == 0) {Console.WriteLine("Bateu o limite"); break;}
+            } while (proximo);
 
-            if (amortizacoesDoRodape.Count > 0) {
-                TotaisRodape rodapeNovo = new TotaisRodape();
-                foreach (var amt in amortizacoesDoRodape) {
-                    rodapeNovo = calcularTotaisRodape( totalParcelasVencidas, amt.saldo_devedor, rodapeNovo.subtotal, rodapeNovo.honorario, rodapeNovo.amortizacao, rodapeNovo.multa, rodapeNovo.total);
-                }
-                parcelado.rodape = rodapeNovo;
-            }
-            return parcelado;
+
+            Console.WriteLine(tabela);
+            return null;
+
+            // TotaisParcelas totais = new TotaisParcelas();
+            // totais.totalParcelasVencidas = totalParcelasVencidas;
+
+            // Parcelado parcelado = new Parcelado(contractRef, tabela.getRegistros(), infoParaCalculo, amortizacoes, rodape, totais);
+            
+            // if (amortizacoesFinal.Count > 0) {
+            //     TotaisRodape rodapeNovo = new TotaisRodape();
+            //     foreach (var amt in amortizacoesFinal) {
+            //         rodapeNovo = calcularTotaisRodape( totalParcelasVencidas, amt.saldo_devedor, rodape.subtotal, rodape.honorario, rodape.amortizacao, rodape.multa, rodape.total);
+            //     }
+            //     parcelado.rodape = rodapeNovo;
+            // }
+            // return parcelado;
+
         }
 
 
@@ -176,18 +225,18 @@ namespace calculadora_api.Services
                 var valorDevedor = parcelado.vincenda ? parcelado.valorPMTVincenda : parcelado.subtotal;
                 string situacao = parcelado.status;
 
-                if (situacao == "Paga") return parcelado;
+                if (situacao == "Pago") return parcelado;
 
                 if (valorDevedor == amortizacao.saldo_devedor) {
                     parcelado.amortizacao = amortizacao.saldo_devedor;
-                    parcelado.status = "Amortizado";
+                    parcelado.status = "Pago";
                     parcelado.totalDevedor = 0;
                     return parcelado;
 
                 } else if (valorDevedor > amortizacao.saldo_devedor) {
                     parcelado.dataCalcAmor = amortizacao.data_vencimento; //ok
                     parcelado.amortizacao = amortizacao.saldo_devedor; //ok
-                    parcelado.status = "Amortizada"; //ok
+                    parcelado.status = "Amortizada"; //ok                    
                     return this.calcular(parcelado);
                     
                 } else {
@@ -232,9 +281,12 @@ namespace calculadora_api.Services
             novaParcela.contractRef = parcelado.contractRef;
             novaParcela.valorNoVencimento = parcelado.totalDevedor;
             
+            this.calcularMulta = false;
             novaParcela = this.calcular(novaParcela);
-            // TODO: Verificar se o status é Pago
             novaParcela.status = "Aberto";
+            this.calcularMulta = true;
+
+            // TODO: Verificar se o status é Pago
             return novaParcela;
         }
 
