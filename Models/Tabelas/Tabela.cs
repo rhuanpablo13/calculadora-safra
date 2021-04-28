@@ -44,6 +44,34 @@ namespace calculadora_api.Models
 
         public List<T> getRegistros() => registros;
 
+        
+        public T get(int index) {
+            if (registros == null || registros.Count == 0 || registros.Count < index) {
+                return default(T);
+            }      
+            return registros[index];
+        }
+
+        public void remove(int index) {
+            if (registros == null || registros.Count == 0 || registros.Count < index) {
+                return;
+            }            
+            registros.RemoveAt(index);
+        }
+
+        public void update(int index, T newObj) {
+            if (registros == null || registros.Count == 0 || registros.Count < index) {
+                return;
+            }            
+            registros[index] = newObj;
+        }
+
+        public bool exists(int index) {
+            if (registros == null || registros.Count == 0) {
+                return false;
+            }
+            return registros[index] != null;
+        }
 
         public override string ToString()
         {

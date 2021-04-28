@@ -84,15 +84,34 @@ namespace calculadora_api.Services
                 //moneyValue
                 p.encargosMonetarios.jurosAm.moneyValue = MathF.Round(((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice) / 30) * p.encargosMonetarios.jurosAm.dias * (this.infoParaCalculo.formJuros / 100), 2);
                 //multa
-                p.encargosMonetarios.multa = this.calcularMulta
-                    ? MathF.Round((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100), 2)
-                    : 0;
+                if (p.nparcelas.Contains(",")) {
+                    p.encargosMonetarios.multa = 0;
+                } else {
+                    p.encargosMonetarios.multa = MathF.Round((p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue) * (this.infoParaCalculo.formMulta / 100), 2);
+                }
+
                 //subtotal
                 p.subtotal = MathF.Round(p.valorNoVencimento + p.encargosMonetarios.correcaoPeloIndice + p.encargosMonetarios.jurosAm.moneyValue + p.encargosMonetarios.multa, 2);
             }
             
+            //float desagio = p.valorNoVencimento
             //valorPMTVincenda
-            p.valorPMTVincenda = MathF.Round(p.valorNoVencimento * (this.infoParaCalculo.formDesagio / 100), 2);
+            if (p.vincenda) {
+                Console.WriteLine("Datas > amort: " + p.dataCalcAmor + " venc: " + p.dataVencimento);
+                var dias = UService.numberOfDays(p.dataCalcAmor, p.dataVencimento);
+                Console.WriteLine("dias > " + -dias);
+                //var juros = p.encargosMonetarios.jurosAm.percentsJuros;
+                var juros = infoParaCalculo.formJuros / 100;
+                Console.WriteLine("Juros > " + juros);
+                Console.WriteLine("formDesagio > " + this.infoParaCalculo.formDesagio);
+                Console.WriteLine("p.valorNoVencimento > " + p.valorNoVencimento);
+                
+                var desagio = MathF.Pow((this.infoParaCalculo.formDesagio / 100) +1, -dias / 30);
+                Console.WriteLine("Desagio > " + desagio);
+                p.valorPMTVincenda = MathF.Round(p.valorNoVencimento * (desagio), 2) - p.amortizacao;
+                Console.WriteLine("p.amortizacao > " + p.amortizacao);
+                Console.WriteLine("p.valorPMTVincenda > " + p.valorPMTVincenda);
+            }
             
             //totalDevedor
             if (!p.vincenda && p.status != "Amortizada") {
@@ -107,6 +126,9 @@ namespace calculadora_api.Services
             if (!p.vincenda && p.status == "Amortizada") {
                 p.totalDevedor = p.subtotal - p.amortizacao;
             }
+            
+            if (p.vincenda)
+                p.totalDevedor = p.valorPMTVincenda;
             // TODO: tratar quando for vincenda e/ou amortizada
             // : p.valorPMTVincenda;            
             p.totalDevedor = MathF.Round(p.totalDevedor, 2);
@@ -116,7 +138,7 @@ namespace calculadora_api.Services
         
         
 
-        public Parcelado calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas, List<RegistroParcela> tabelaParcelados, string contractRef) {
+        public Tabela<RegistroParcela> calcularAmortizacao(List<InfoParaAmortizacao> amortizacoes, TotaisRodape rodape, TotalParcelasVencidas totalParcelasVencidas, List<RegistroParcela> tabelaParcelados, string contractRef) {
 
             if (amortizacoes == null || amortizacoes.Count == 0) {
                 return null;
@@ -126,13 +148,13 @@ namespace calculadora_api.Services
                 return null;
             }
 
+            
             Tabela<RegistroParcela> tabela = new Tabela<RegistroParcela>();
-            tabela.adicionarRegistro(tabelaParcelados[0]);
-            //tabelaParcelados.RemoveAt(0);
-
+            
             List<InfoParaAmortizacao> amortizacoesFinal = new List<InfoParaAmortizacao>();
             RegistroParcela parceladoRegistro;
             bool proximo = true;
+            bool calcularSobreAmortizada = false;
             int i = 0;
             int controle = 5;
 
@@ -146,17 +168,41 @@ namespace calculadora_api.Services
                 }
             }
             amortizacoes = amortizacoesAux;
-
+            int qtdAmort = amortizacoes.Count;
 
             do {
-                parceladoRegistro = tabela.getRegistros()[i];
+
+                if (tabelaParcelados.Count == 0 && !calcularSobreAmortizada) {
+                    break;
+                }
+
+                if (calcularSobreAmortizada) {
+                    Console.WriteLine("calcularSobreAmortizad");
+                    Console.WriteLine(i);
+                    Console.WriteLine(tabela.ToString());
+                    //break;
+                    parceladoRegistro = tabela.get(i);
+                } else {
+                    parceladoRegistro = tabelaParcelados[i];
+                    tabelaParcelados.RemoveAt(i);
+                }
+
+
                 var valorDevedor = parceladoRegistro.vincenda ? parceladoRegistro.valorPMTVincenda : parceladoRegistro.subtotal;
                 string situacao = parceladoRegistro.status;
                 
                 if (situacao == "Pago" || situacao == "Amortizada") {
-                    i++; // vai pro próximo registro
+                    Console.WriteLine("Parcela Paga ou Amortizada");
+                    Console.WriteLine(parceladoRegistro);
+
                     tabela.adicionarRegistro(tabelaParcelados[i]);
-                    continue;
+                    tabelaParcelados.RemoveAt(i);
+
+                    i++; // vai pro próximo registro
+                    if (tabelaParcelados[i] != null) {
+                        continue;
+                    }
+                    break;
                 }
 
 
@@ -164,33 +210,76 @@ namespace calculadora_api.Services
                 for (int j = 0; j < amortizacoes.Count; j++)
                 {
                     InfoParaAmortizacao amortizacao = amortizacoes[j];
+                    Console.WriteLine("amortização: ");
+                    Console.WriteLine(amortizacao);
+                    Console.WriteLine();
 
                     if (valorDevedor == amortizacao.saldo_devedor) {
+                        Console.WriteLine("valor devedor e amort são iguais");
+                        Console.WriteLine(parceladoRegistro);
+
                         parceladoRegistro.amortizacao = amortizacao.saldo_devedor;
                         parceladoRegistro.status = "Pago";
                         parceladoRegistro.totalDevedor = 0;
-                        tabela.getRegistros()[i] = parceladoRegistro; // atualiza o registro no array
+                        tabela.update(i, parceladoRegistro); // atualiza o registro no array
                         amortizacoes.RemoveAt(j);
                         break;
                     }
 
-                    if (valorDevedor > amortizacao.saldo_devedor) {
-                        Console.WriteLine("Entrou aqui");
+                    // amortizando um valor menor que a parcela
+                    if (amortizacao.saldo_devedor < valorDevedor) {
+                        Console.WriteLine("amortizando um valor menor que a parcela");
+                        if (tabela.temRegistros() == false) Console.WriteLine("a tabela está vazia");
+
                         parceladoRegistro.dataCalcAmor = amortizacao.data_vencimento; //ok
                         parceladoRegistro.amortizacao = amortizacao.saldo_devedor; //ok
                         parceladoRegistro.status = "Amortizada"; //ok
+                        // Console.WriteLine(parceladoRegistro);
                         parceladoRegistro = this.calcular(parceladoRegistro);
-                        tabela.getRegistros()[i] = parceladoRegistro; // atualiza o registro no array
-                        RegistroParcela novoParcelado = novaParcela(parceladoRegistro, amortizacao, true);
+                        if (tabela.exists(i)) {
+                            Console.WriteLine("o registro já existe, vamos atualizar");
+                            // Console.WriteLine(parceladoRegistro);
+
+                            tabela.update(i, parceladoRegistro); // atualiza o registro no array
+                        } else {
+                            Console.WriteLine("O registro não existe, vamos inserir");
+                            // Console.WriteLine(parceladoRegistro);
+
+                            tabela.adicionarRegistro(parceladoRegistro);
+                        }
+                        Console.WriteLine("calculando a nova parcela");
+                        RegistroParcela novoParcelado;
+                        if (j == 0 && amortizacoes.Count == qtdAmort){
+                            novoParcelado = novaParcela(parceladoRegistro, amortizacao, true, true);
+                        } else {
+                            novoParcelado = novaParcela(parceladoRegistro, amortizacao, true, false);
+                        }
+                        // Console.WriteLine(novoParcelado);
                         tabela.adicionarRegistro(novoParcelado);
-                        proximo = true;
-                        i++;
-                        break;
+                        amortizacoes.RemoveAt(j);
+
+                        // se ainda tiver amortizações para calcular
+                        if (amortizacoes.Count > j) {
+                            // Console.WriteLine("ainda tem amortizações");
+                            calcularSobreAmortizada = true;
+                            proximo = true;
+                            i++;
+                            break;
+                        } else {
+                            // Console.WriteLine("não tem mais amortizações");
+                            if (tabelaParcelados.Count > 0) {
+                                // Console.WriteLine("ainda tem parcelas sobrando, então vamos adicionar ao final da tabela");                                
+                            }
+                            tabelaParcelados.ForEach(a => tabela.adicionarRegistro(a));
+                            calcularSobreAmortizada = false;
+                            proximo = false;
+                        }
                     }
 
                     if (valorDevedor < amortizacao.saldo_devedor) {
                         proximo = false;
-                        Console.WriteLine("Amortização é maior que a parcela");
+                        // Console.WriteLine("Amortização é maior que a parcela");
+                        break;
                     }
 
                 }
@@ -200,8 +289,8 @@ namespace calculadora_api.Services
             } while (proximo);
 
 
-            Console.WriteLine(tabela);
-            return null;
+            // Console.WriteLine(tabela);
+            return tabela;
 
             // TotaisParcelas totais = new TotaisParcelas();
             // totais.totalParcelasVencidas = totalParcelasVencidas;
@@ -220,62 +309,17 @@ namespace calculadora_api.Services
         }
 
 
-        private RegistroParcela calcularDiferenciada(InfoParaAmortizacao amortizacao, RegistroParcela parcelado) {
-            
-                var valorDevedor = parcelado.vincenda ? parcelado.valorPMTVincenda : parcelado.subtotal;
-                string situacao = parcelado.status;
-
-                if (situacao == "Pago") return parcelado;
-
-                if (valorDevedor == amortizacao.saldo_devedor) {
-                    parcelado.amortizacao = amortizacao.saldo_devedor;
-                    parcelado.status = "Pago";
-                    parcelado.totalDevedor = 0;
-                    return parcelado;
-
-                } else if (valorDevedor > amortizacao.saldo_devedor) {
-                    parcelado.dataCalcAmor = amortizacao.data_vencimento; //ok
-                    parcelado.amortizacao = amortizacao.saldo_devedor; //ok
-                    parcelado.status = "Amortizada"; //ok                    
-                    return this.calcular(parcelado);
-                    
-                } else {
-                    Console.WriteLine("<");
-                    return new RegistroParcela();
-                }
-
-            //     valorDevedor == amortizacao.saldo_devedor;
-            //         parcelado.amortizacao = amortizacao.saldo_devedor;
-            //         parcelado.status = 'Amortizado';
-            //         parcelado.totalDevedor = 0;
-
-            //     valorDevedor > amortizacao.saldo_devedor;
-            //         parcelado.amortizacao = amortizacao.saldo_devedor;
-            //         parcelado.status = 'Aberto';
-            //         parcelado.totalDevedor = valorDevedor - amortizacao.saldo_devedor;                   
-            //         // chamar a funcao novaParcela()
-
-            //     valorDevedor < amortizacao.saldo_devedor;
-            //         parcelado.amortizacao = valorDevedor;
-            //         parcelado.status = 'Amortizado';
-            //         parcelado.totalDevedor = 0;
-            //         // o que sobrar da amortização, jogar na parcela de baixo
-            //         // chamar a funcao novaParcela()
-
-
-            // recalcular os totais das colunas e o rodapé,
-            // revisar o calculo do rodapé considerando a amortizaçao
-        }
-
-
-        public RegistroParcela novaParcela(RegistroParcela parcelado, InfoParaAmortizacao infoParaAmortizacao, bool maior) {
+        public RegistroParcela novaParcela(RegistroParcela parcelado, InfoParaAmortizacao infoParaAmortizacao, bool maior, bool primeiraAmort) {
 
             RegistroParcela novaParcela = new RegistroParcela();
             // TODO: aqui a parcela vai receber o . alguma coisa
             float nrParcela = float.Parse(parcelado.nparcelas) + 0.1f;
             novaParcela.nparcelas = nrParcela.ToString();
             novaParcela.dataVencimento = infoParaAmortizacao.data_vencimento;
-            novaParcela.dataCalcAmor = infoParaCalculo.formDataCalculo;
+            novaParcela.dataCalcAmor = primeiraAmort ? infoParaCalculo.formDataCalculo : parcelado.dataVencimento;
+            bool v = UService.maiorQue(novaParcela.dataVencimento, novaParcela.dataCalcAmor);
+            if (v) novaParcela.vincenda = true;
+            
             novaParcela.indiceDV = parcelado.indiceDV;
             novaParcela.indiceDCA = parcelado.indiceDCA;
             novaParcela.contractRef = parcelado.contractRef;

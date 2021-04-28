@@ -139,7 +139,7 @@ namespace calculadora_api.Controllers
 
         [Route("incluir-amortizacao")]
         [HttpPost]
-        public ActionResult<JObject> incluirAmortizacao([FromBody] JObject dados)
+        public ActionResult<string> incluirAmortizacao([FromBody] JObject dados)
         {
             Parcelado retornoParcelado = Parcelado.parse(
                 dados.SelectToken("totais"),
@@ -152,7 +152,7 @@ namespace calculadora_api.Controllers
 
 
             ParceladoPreService service = new ParceladoPreService(indiceController, retornoParcelado.infoParaCalculo);
-            Parcelado retorno = service.calcularAmortizacao(
+            Tabela<RegistroParcela> retorno = service.calcularAmortizacao(
                 retornoParcelado.infoParaAmortizacao,
                 retornoParcelado.rodape,
                 retornoParcelado.totais.totalParcelasVencidas,
@@ -162,11 +162,13 @@ namespace calculadora_api.Controllers
 
             // Console.WriteLine(retorno);
 
-            if (retorno == null) return JObject.Parse(JsonConvert.SerializeObject(retornoParcelado));
+            // if (retorno == null) return JObject.Parse(JsonConvert.SerializeObject(retornoParcelado));
 
-            retorno.contractRef = retornoParcelado.contractRef;
-            retorno.infoParaCalculo = retornoParcelado.infoParaCalculo;
-            return JObject.Parse(JsonConvert.SerializeObject(retorno));
+            // retorno.contractRef = retornoParcelado.contractRef;
+            // retorno.infoParaCalculo = retornoParcelado.infoParaCalculo;
+            // return JObject.Parse(JsonConvert.SerializeObject(retorno));
+            return JsonConvert.SerializeObject(retorno.getRegistros());
+
         }
 
 
