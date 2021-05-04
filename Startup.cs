@@ -24,8 +24,8 @@ namespace calculadora_api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddHttpContextAccessor();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<AuthenticatedUser>();
 
             services.AddCors();
             services.AddControllers();
@@ -58,9 +58,6 @@ namespace calculadora_api
 
             services.AddDbContext<ApplicationContext>
                 (opt => opt.UseSqlServer(Configuration["Data:UserAPIConnection:ConnectionString"]));
-
-            services.AddScoped<IUser, User>();
-
 
         }
 

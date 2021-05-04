@@ -9,49 +9,42 @@ namespace calculadora_api.Repositories
     public class UserRepository
     {
 
-        private readonly IUser _user;
+        private readonly User _user;
 
-        public UserRepository(IUser user)
+        private readonly ApplicationContext _context;
+
+
+        public UserRepository(User user, ApplicationContext context)
         {
             _user = user;
+            _context = context;
         }
 
-        public void Adicionar(AspNetUser entidade)
+        public void Adicionar(User entidade)
         {
             Console.WriteLine(entidade.Name);
+        }
 
-            // entidade.UsuarioRegistro = _user.Name
-            // DbContext.MinhaEntidade.Add(entidade);
-            // DbContext.SaveChanges();
+        public User Get(string username)
+        {
+            IQueryable<User> users = _context.UserItems.Where(u => u.Name == username);
+            
+            return users.Where(x => x.Name.ToLower() == username.ToLower()).FirstOrDefault();
         }
 
 
-        // public static User VerifyUser(string username, string password)
-        // {
-        //     var users = new List<User>();
+        public static List<User> UserList()
+        {
+            var users = new List<User>();
+            DateTime localDate = DateTime.Now;
 
-        //     DateTime localDate = DateTime.Now;
+            users.Add(new User { Id = 1, Name = "admin", Profile = "admin", CreatedDate = localDate });
+            users.Add(new User { Id = 2, Name = "editor", Profile = "employee", CreatedDate = localDate });
+            users.Add(new User { Id = 3, Name = "consult", Profile = "consult", CreatedDate = localDate });
 
-        //     users.Add(new User { Id = 1, Username = "admin", Password = "admin", Profile = "admin", Status = true, CreatedDate = localDate });
-        //     users.Add(new User { Id = 2, Username = "editor", Password = "editor", Profile = "employee", Status = true, CreatedDate = localDate });
-        //     users.Add(new User { Id = 3, Username = "consult", Password = "consult", Profile = "consult", Status = true, CreatedDate = localDate });
+            return users;
+        }
 
-        //     return users.Where(x =>
-        //          x.Username.ToLower() == username.ToLower() && HashService.Verify(x.Password, HashService.Hash(password))
-        //     ).FirstOrDefault();
-        // }
 
-        // public static List<User> UserList()
-        // {
-        //     var users = new List<User>();
-
-        //     DateTime localDate = DateTime.Now;
-
-        //     users.Add(new User { Id = 1, Username = "admin", Password = "admin", Profile = "admin", Status = true, CreatedDate = localDate });
-        //     users.Add(new User { Id = 2, Username = "editor", Password = "editor", Profile = "employee", Status = true, CreatedDate = localDate });
-        //     users.Add(new User { Id = 3, Username = "consult", Password = "consult", Profile = "consult", Status = true, CreatedDate = localDate });
-
-        //     return users;
-        // }
     }
 }

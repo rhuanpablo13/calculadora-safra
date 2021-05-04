@@ -1,37 +1,37 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using calculadora_api.Models;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
 using calculadora_api.Services;
 using calculadora_api.Repositories;
+
 
 namespace calculadora_api.Controllers
 {
     [Route("api/auth")]
-    public class AuthController : Controller
+    public class AuthController : Controller 
     {
+
         [HttpPost]
         [Route("login")]
-        [AllowAnonymous]
-        public ActionResult<dynamic> Authenticate([FromBody] User model)
+        public async Task<ActionResult<dynamic>> Authenticate([FromBody] User model)
         {
-            // var user = UserRepository.VerifyUser(model.Username, model.Password);
+            // Recupera o usu·rio do banco
+            var user = UserRepository.Get(model.Name);
 
-            // if (user == null)
-            //     return NotFound(new { message = "Usu√°rio ou senha inv√°lidos" });
+            // Verifica se o usu·rio existe
+            if (user == null)
+                return NotFound(new { message = "Usu·rio inv·lido" });
 
-            // var token = TokenService.GenerateToken(user);
-            // user.Password = null;
+            // Gera o Token
+            var token = TokenService.GenerateToken(user);
 
-            // return new
-            // {
-            //     user = user,
-            //     token = token
-            // };
-            return null;
+
+            // Retorna os dados
+            return new
+            {
+                user = user,
+                token = token
+            };
         }
     }
 }

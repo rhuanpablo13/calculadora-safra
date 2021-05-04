@@ -13,6 +13,8 @@ using calculadora_api.Services;
 using System.Security;
 using System.Security.Principal;
 using calculadora_api.Dao;
+using System.Security.Claims;
+
 
 namespace calculadora_api.Controllers
 {
@@ -25,6 +27,7 @@ namespace calculadora_api.Controllers
         private readonly IndiceController indiceController;
 
         private readonly U jc = new U();
+        
 
         public ChequeEmpresarialController(ApplicationContext context)
         {
@@ -32,7 +35,6 @@ namespace calculadora_api.Controllers
             if (indiceController == null)
                 indiceController = new IndiceController(_context);
         }
-
 
 
         [HttpGet("pesquisar")]
