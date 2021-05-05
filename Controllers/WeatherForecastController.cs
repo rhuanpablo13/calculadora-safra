@@ -39,13 +39,13 @@ namespace calculadora_safra.Controllers
             // var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             Console.WriteLine("--------------------------");
             // Console.WriteLine("userId: " + userId);
-            Console.WriteLine("Nome: " + _user.Name);
-            Console.WriteLine("Email: " + _user.Email);
+            //Console.WriteLine("Nome: " + _user.Name);
+            //Console.WriteLine("Email: " + _user.Email);
             Console.WriteLine(_user.GetClaimsIdentity().Count());
 
             
 
-            return Ok("name: " + _user.Name + ", email: " + _user.Email);
+            return Ok();
         }
     }
 }

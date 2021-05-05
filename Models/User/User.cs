@@ -10,9 +10,9 @@ namespace calculadora_api.Models
     {
         public User() { }
 
-        public User(int Id, string Name, string Profile) {
+        public User(int Id, string Username, string Profile) {
             this.Id = Id;
-            this.Name = Name;
+            this.Username = Username;
             this.Profile = Profile;
             CreatedDate = new DateTime();
         }
@@ -20,7 +20,7 @@ namespace calculadora_api.Models
         [Key]
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string Name { get; set; }
+        public string Username { get; set; }
         public string Profile { get; set; }
 
     }

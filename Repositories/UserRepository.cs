@@ -9,40 +9,29 @@ namespace calculadora_api.Repositories
     public class UserRepository
     {
 
-        private readonly User _user;
-
+        
         private readonly ApplicationContext _context;
 
 
-        public UserRepository(User user, ApplicationContext context)
-        {
-            _user = user;
+        public UserRepository(ApplicationContext context)
+        {            
             _context = context;
         }
 
         public void Adicionar(User entidade)
         {
-            Console.WriteLine(entidade.Name);
+            _context.Add(entidade);
         }
 
         public User Get(string username)
         {
-            IQueryable<User> users = _context.UserItems.Where(u => u.Name == username);
-            
-            return users.Where(x => x.Name.ToLower() == username.ToLower()).FirstOrDefault();
+            return _context.UserItems.Where(u => u.Username == username).FirstOrDefault();            
         }
 
 
-        public static List<User> UserList()
-        {
-            var users = new List<User>();
-            DateTime localDate = DateTime.Now;
-
-            users.Add(new User { Id = 1, Name = "admin", Profile = "admin", CreatedDate = localDate });
-            users.Add(new User { Id = 2, Name = "editor", Profile = "employee", CreatedDate = localDate });
-            users.Add(new User { Id = 3, Name = "consult", Profile = "consult", CreatedDate = localDate });
-
-            return users;
+        public List<User> UserList()
+        {            
+            return _context.UserItems.ToList();
         }
 
 

@@ -15,9 +15,15 @@ namespace calculadora_api.Models
             _accessor = accessor;
         }
 
-        public string FullName => _accessor.HttpContext.User.Identity.Name;
+        public string FullName()
+        {
+            return _accessor.HttpContext.User.Identity.Name;
+        }
 
-        public string Name => FullName.Split("\\").Last();
+        public string Name()
+        {
+            return FullName()?.Split("\\").Last();
+        }
 
 
         public bool IsAuthenticated => _accessor.HttpContext.User.Identity.IsAuthenticated;

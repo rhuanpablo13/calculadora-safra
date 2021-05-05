@@ -12,6 +12,8 @@ using Newtonsoft.Json.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using calculadora_api.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace calculadora_api
 {
@@ -50,6 +52,7 @@ namespace calculadora_api
                 };
             });
 
+
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                 {
@@ -69,7 +72,7 @@ namespace calculadora_api
                 app.UseDeveloperExceptionPage();
             }
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
