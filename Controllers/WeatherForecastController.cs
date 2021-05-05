@@ -37,11 +37,11 @@ namespace calculadora_safra.Controllers
         public ActionResult<WeatherForecast> Get()
         {
             // var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            Console.WriteLine("--------------------------");
+            // Console.WriteLine("--------------------------");
             // Console.WriteLine("userId: " + userId);
-            //Console.WriteLine("Nome: " + _user.Name);
-            //Console.WriteLine("Email: " + _user.Email);
-            Console.WriteLine(_user.GetClaimsIdentity().Count());
+            // Console.WriteLine("Nome: " + _user.Name);
+            // Console.WriteLine("Email: " + _user.Email);
+            // Console.WriteLine(_user.GetClaimsIdentity().Count());
 
             
 
