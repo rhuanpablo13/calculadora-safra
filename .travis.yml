@@ -10,9 +10,9 @@ os: windows
 
 #solution: calculadora-safra.sln
 
-script:
-- dotnet restore
-- dotnet build
+#script:
+#- dotnet restore
+#- dotnet build
 
 before_deploy:
 - dotnet pack -c Release
