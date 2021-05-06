@@ -11,7 +11,7 @@ os: windows
 #solution: calculadora-safra.sln
 
 script:
-- dotnet restore ./calculadora-safra.sln
+#- dotnet restore ./calculadora-safra.sln
 - dotnet build calculadora-safra.sln
 
 before_deploy:
