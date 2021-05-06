@@ -5,12 +5,9 @@ script:
 - choco install dotnetcore-sdk
 - dotnet --version
 - dotnet restore
+- dotnet build
 
-#before_install:
-#  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
-#  - source .disable-windows-defender.sh
-
-#solution: calculadora-safra.sln
+solution: calculadora-safra.sln
 
 #script:
 #- dotnet restore
@@ -18,6 +15,7 @@ script:
 
 before_deploy:
 - dotnet pack -c Release
+- dotnet run
 
 deploy:
  skip_cleanup: true
