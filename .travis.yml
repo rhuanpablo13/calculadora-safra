@@ -3,6 +3,12 @@ sudo: required
 mono: none
 dotnet: 3.1
 os: windows
+matrix:
+  # TODO These are all the build jobs. Adjust as necessary. Comment out what you
+  # don't need
+  include:
+    # Windows
+    - env: TARGET=x86_64-pc-windows-gnu
 
 solution: ./calculadora-safra.sln
 
