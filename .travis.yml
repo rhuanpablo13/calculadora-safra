@@ -10,6 +10,14 @@ matrix:
     # Windows
     - env: TARGET=x86_64-pc-windows-gnu
 
+env:
+  global:
+    - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
+
+before_install:
+  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
+  - source .disable-windows-defender.sh
+
 solution: ./calculadora-safra.sln
 
 install:
