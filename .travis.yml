@@ -1,7 +1,8 @@
 language: csharp
-mono:
-  - latest
-sudo: required
+mono: none
+dotnet: 2.1.502
+script:
+ - dotnet restore
 os: windows
 
 before_install:
