@@ -10,7 +10,7 @@ install:
 script:
  - dotnet build ./calculadora-safra.sln
 
- before_deploy:
+before_deploy:
 - dotnet pack -c Release
 
 deploy:
