@@ -1,7 +1,7 @@
 language: csharp
 sudo: required
 mono: none
-dotnet: 3.1.14
+dotnet: 5.0.5
 os: windows
 
 before_install:
