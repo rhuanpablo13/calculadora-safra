@@ -8,12 +8,12 @@ os: windows
 #  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
 #  - source .disable-windows-defender.sh
 
-solution: ./calculadora-safra.sln
+solution: calculadora-safra.sln
 
 install:
-- dotnet restore ./calculadora-safra.sln
+- dotnet restore calculadora-safra.sln
 script:
-- dotnet build ./calculadora-safra.sln
+- dotnet build calculadora-safra.sln
 
 before_deploy:
 - dotnet pack -c Release
