@@ -1,7 +1,7 @@
 language: csharp
 mono: none
 os: windows
-
+dotnet: 3.1
 #before_install:
 #  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
 #  - source .disable-windows-defender.sh
