@@ -1,25 +1,25 @@
 language: csharp
 mono: none
 dotnet: 2.1.502
-script:
- - dotnet restore
+#script:
+# - dotnet restore
 os: windows
 
-before_install:
-  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
-  - source .disable-windows-defender.sh
+#before_install:
+#  - curl "${GRAVIS}.disable-windows-defender.sh" --output .disable-windows-defender.sh
+#  - source .disable-windows-defender.sh
 
-solution: ./calculadora-safra.sln
+#solution: ./calculadora-safra.sln
 
-install:
-- dotnet restore ./calculadora-safra.sln
-script:
- - dotnet build ./calculadora-safra.sln
+#install:
+#- dotnet restore ./calculadora-safra.sln
+#script:
+# - dotnet build ./calculadora-safra.sln
 
-before_deploy:
-- dotnet pack -c Release
+#before_deploy:
+#- dotnet pack -c Release
 
-deploy:
-  skip_cleanup: true
-  on:
-    branch: CB-05
+#deploy:
+#  skip_cleanup: true
+#  on:
+#    branch: CB-05
