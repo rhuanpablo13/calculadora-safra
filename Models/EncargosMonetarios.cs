@@ -20,11 +20,16 @@ namespace calculadora_api.Models
 
         public static EncargosMonetarios parse(string jsonString) {
             Console.WriteLine(jsonString);
-            EncargosMonetarios em = JsonSerializer.Deserialize<EncargosMonetarios>(jsonString);
-            // float x = 270.61864847349717630804948048M;
-            // float y = Math.Round(x,3);
+            string n = jsonString
+                .Split("\"percentsJuros\"")[1]
+                .Split("\"moneyValue\"")[0]
+                .Replace("\"", "")
+                .Replace(":", "")
+                .Replace(",", "");
 
-            // float d = Math.Round(em.correcaoPeloIndice, 3);
+            jsonString = jsonString.Replace("\"percentsJuros\"" + ":" + "\"" + n + "\"", "\"percentsJuros\"" + ":" + n);
+            jsonString = jsonString.Replace("\"NaN\"", "0");
+            EncargosMonetarios em = JsonSerializer.Deserialize<EncargosMonetarios>(jsonString);
             return em;
         }
 

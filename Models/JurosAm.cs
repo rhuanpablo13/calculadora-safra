@@ -17,8 +17,13 @@ namespace calculadora_api.Models
 
         public static JurosAm parse(JToken jurosAmJson)
         {
-            JurosAm info = jurosAmJson.ToObject<JurosAm>();
-            return info;
+            Console.WriteLine("****************************************");
+            var a = jurosAmJson.SelectToken("percentsJuros");
+            Console.WriteLine("****************************************");
+            Console.WriteLine(a);
+            // JurosAm info = jurosAmJson.ToObject<JurosAm>();
+            // return info;
+            return new JurosAm();
         }
 
        
