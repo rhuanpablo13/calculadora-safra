@@ -19,4 +19,7 @@ RUN dotnet publish "calculadora-safra.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "calculadora-safra.dll"]
+#ENTRYPOINT ["dotnet", "calculadora-safra.dll"]
+
+# Opção utilizada pelo Heroku
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet calculadora-safra.dll
